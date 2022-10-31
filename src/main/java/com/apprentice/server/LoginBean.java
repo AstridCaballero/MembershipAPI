@@ -1,4 +1,8 @@
 package com.apprentice.server;
+
+import javax.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
 public class LoginBean {
 
     public String cardId;
