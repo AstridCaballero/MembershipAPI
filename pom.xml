@@ -80,7 +80,7 @@
         <!-- https://mvnrepository.com/artifact/io.quarkus/quarkus-hibernate-orm-panache -->
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-hibernate-orm</artifactId>
+            <artifactId>quarkus-hibernate-orm-panache</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
@@ -120,11 +120,6 @@
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.quarkus/quarkus-test-security -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-test-security-jwt</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-test-security-jwt</artifactId>
