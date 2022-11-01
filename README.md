@@ -6,6 +6,14 @@
 - Quarkus 2.13.0.final
 - Make sure GIT_HOME, MVN_HOME and JAVA_HOME are set and they are in your PATH variable
 
+### For connection to h2 console go to
+```bash
+http://localhost:8081/h2
+```
+Once in the h2 console type the following JDBC URL:
+```bash
+jdbc:h2:mem:membershipDB
+```
 
 ### Testing:
 Jacoco

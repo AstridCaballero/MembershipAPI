@@ -2,6 +2,7 @@ package com.apprentice.server;
 
 import javax.enterprise.context.ApplicationScoped;
 
+//@ApplicationScoped allows Quarkus to recognise this interface and inject it when called
 @ApplicationScoped
 public class LoginBean {
 
