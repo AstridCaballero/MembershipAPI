@@ -12,7 +12,6 @@ import javax.persistence.OneToOne;
  * and map it into the table 'card' of a database
  */
 @Entity
-//@Table(name = "cardEmployee")
 public class Card extends PanacheEntityBase {
     @Id
     private String cardId;

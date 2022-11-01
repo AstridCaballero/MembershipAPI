@@ -8,7 +8,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 @Entity
-//@Table(name = "employeeInfo")
 public class Employee extends PanacheEntityBase {
 
     @Id
