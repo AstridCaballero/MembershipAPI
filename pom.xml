@@ -71,7 +71,7 @@
             <artifactId>quarkus-arc</artifactId>
         </dependency>
 
-        <!--DATABASE-->
+        <!--DATABASE and ORM dependencies-->
         <!-- https://mvnrepository.com/artifact/io.quarkus/quarkus-jdbc-h2 -->
         <dependency>
             <groupId>io.quarkus</groupId>
