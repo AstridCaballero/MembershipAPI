@@ -1,19 +1,10 @@
---1. Create Card table
-
---CREATE TABLE card
---(
---    cardId varchar(255),
---    cardPassCode int,
---    cardbalance decimal,
---    primary key (cardId)
---);
+--1. Populate Card table
 
 INSERT INTO card (cardId, cardPassCode, cardBalance) VALUES ('r7jTG7dqBy5wGO4L', '1234', 0.00);
 INSERT INTO card (cardId, cardPassCode, cardBalance) VALUES ('r7jTG7dqBy5wGO5k', '1234', 10.00);
 
 --2. Create Employee table
-CREATE TABLE employee
-(
+CREATE TABLE employee (
     employeeId varchar(255),
     cardId varchar(255),
     name varchar(255),

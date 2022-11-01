@@ -5,7 +5,6 @@ import javax.persistence.Id;
 
 @Entity
 public class Card {
-
     @Id
     public String cardId;
     public int cardPassCode;
