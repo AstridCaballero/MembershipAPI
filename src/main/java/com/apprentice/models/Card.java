@@ -1,4 +1,4 @@
-package com.apprentice.domain;
+package com.apprentice.models;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -6,9 +6,9 @@ import javax.persistence.Id;
 @Entity
 public class Card {
     @Id
-    public String cardId;
-    public int cardPassCode;
-    public double cardBalance;
+    private String cardId;
+    private int cardPassCode;
+    private double cardBalance;
 
     public String getCardId() {
         return cardId;
