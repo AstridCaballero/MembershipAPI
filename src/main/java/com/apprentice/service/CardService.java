@@ -23,7 +23,7 @@ public class CardService {
      * Stores Card information
      */
 
-    public void registerCardId(final Card card) {
+    public void registerCard(final Card card) {
         cardRepository.persist(card);
     }
 

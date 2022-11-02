@@ -23,7 +23,7 @@ public class EmployeeService {
      * Stores Employee information
      */
 
-    public void registerCardId(final Employee employee) {
+    public void registerEmployee(final Employee employee) {
         employeeRepository.persist(employee);
     }
 

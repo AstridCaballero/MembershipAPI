@@ -15,6 +15,8 @@ Once in the h2 console type the following JDBC URL:
 jdbc:h2:mem:membershipDB
 ```
 
+### Patterns used
+- Repository pattern
 ### Testing:
 Jacoco
 quarkus-junit5 2.13.0.final

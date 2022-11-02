@@ -1,21 +1,19 @@
 package com.apprentice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
-//@Table(name = "employeeInfo")
 public class Employee extends PanacheEntityBase {
 
     @Id
     private String employeeId;
 
-    @OneToOne(targetEntity = Card.class)
-    @JoinColumn(name = "cardId_F")
+    @OneToOne(targetEntity = Card.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "cardId")
+    @JsonIgnore
     private Card card;
 
     private String employeeName;
