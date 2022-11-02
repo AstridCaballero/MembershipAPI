@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
 @Tag(name = "Welcome screen")
 @Path("/main")
 public class TopUpResource {
-    private static final Logger LOGGER = Logger.getLogger(LoginResource.class);
+    private static final Logger LOGGER = Logger.getLogger(TopUpResource.class);
 
     @Inject
     CardService cardService;
