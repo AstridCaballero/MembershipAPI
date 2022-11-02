@@ -20,9 +20,9 @@ import javax.ws.rs.core.Response;
 
 @ApplicationScoped
 @Tag(name = "Welcome screen")
-@Path("/main")
-public class TopUpResource {
-    private static final Logger LOGGER = Logger.getLogger(TopUpResource.class);
+@Path("/welcome")
+public class WelcomeScreenResource {
+    private static final Logger LOGGER = Logger.getLogger(WelcomeScreenResource.class);
 
     @Inject
     CardService cardService;
