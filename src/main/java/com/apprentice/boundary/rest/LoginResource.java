@@ -27,27 +27,33 @@ public class LoginResource {
     EmployeeService employeeService;
 
     /**
-     * Gets the name of the Employee if card is registered
+     * Retrieves the name of the Employee if card is registered
      * @param cardId
+     * @param cardPassCode
      * @return String
      */
     @GET
-    @Path("/{cardId}")
+    @Path("/{cardId}/{cardPassCode}")
     @Operation(summary = "Checks if user if registered")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
     @APIResponse(responseCode = "200", description = "User is registered")
     @APIResponse(responseCode = "404", description = "User is not found")
     @APIResponse(responseCode = "500", description = "Internal Server Error")
-
-    public Response employeeName(@PathParam("cardId") final String cardId) {
+    public Response findCard(@PathParam("cardId") final String cardId,
+                             @PathParam("cardPassCode") final int cardPassCode) {
         Card card = cardService.findCard(cardId);
         if (card != null) {
-            Employee employee = card.getEmployee();
-            return Response.ok(employee.getEmployeeName()).build();
+            if (card.getCardPassCode() == cardPassCode) {
+                Employee employee = card.getEmployee();
+                return Response.ok("Welcome " + employee.getEmployeeName() + "!").build();
+            } else {
+                return Response.ok("four-digit code is wrong, try again ").status(Response.Status.NOT_FOUND).build();
+            }
         }
-        return Response.ok("Card is not registered").build();
+        return Response.ok("Card is not registered").status(Response.Status.NOT_FOUND).build();
     }
+
 
     /**
      * This POst request takes the Employee information, creates a record in Employee table and a record in Card table
