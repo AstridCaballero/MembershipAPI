@@ -8,6 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -20,6 +21,8 @@ import javax.ws.rs.core.Response;
 @Tag(name = "Service to login user")
 @Path("/login")
 public class LoginResource {
+
+    private static final Logger LOGGER = Logger.getLogger(LoginResource.class);
     @Inject
     CardService cardService;
 
@@ -37,16 +40,19 @@ public class LoginResource {
     @Operation(summary = "Checks if user if registered")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
-    @APIResponse(responseCode = "200", description = "User is registered")
-    @APIResponse(responseCode = "404", description = "User is not found")
+    @APIResponse(responseCode = "200", description = "Card is registered")
+    @APIResponse(responseCode = "404", description = "Card is not found")
     @APIResponse(responseCode = "500", description = "Internal Server Error")
     public Response findCard(@PathParam("cardId") final String cardId,
                              @PathParam("cardPassCode") final int cardPassCode) {
-        Card card = cardService.findCard(cardId);
+        final Card card = cardService.findCard(cardId);
+        LOGGER.info(card.toString());
         if (card != null) {
             if (card.getCardPassCode() == cardPassCode) {
-                Employee employee = card.getEmployee();
-                return Response.ok("Welcome " + employee.getEmployeeName() + "!").build();
+                final Employee employee = card.getEmployee();
+                LOGGER.info(employee.toString());
+                return Response.ok("Welcome " + employee.getEmployeeName() + "!\n" +
+                    "Balance: £" + card.getCardBalance()).build();
             } else {
                 return Response.ok("four-digit code is wrong, try again ").status(Response.Status.NOT_FOUND).build();
             }
@@ -56,7 +62,7 @@ public class LoginResource {
 
 
     /**
-     * This POst request takes the Employee information, creates a record in Employee table and a record in Card table
+     * This Post request takes the Employee information, creates a record in Employee table and a record in Card table
      * @param card
      * @return card in Json format
      */
@@ -64,11 +70,15 @@ public class LoginResource {
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response registerCard(@RequestBody Card card) {
-//      First persist the child class
+    @APIResponse(responseCode = "201", description = "Card registration successful")
+    @APIResponse(responseCode = "500", description = "Internal Server Error")
+    public Response registerCard(@RequestBody final Card card) {
+        // First persist the child class
         employeeService.registerEmployee(card.getEmployee());
-//      Then persist the parent class
+        LOGGER.info("Employee persisted");
+        // Then persist the parent class
         cardService.registerCard(card);
+        LOGGER.info("Card persisted");
         return Response.ok(card).status(Response.Status.CREATED).build();
     }
 }

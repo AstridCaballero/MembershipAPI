@@ -1,10 +1,14 @@
 package com.apprentice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * This entity contains the attributes that represent the fields of a table 'card' of a DB
@@ -12,54 +16,28 @@ import javax.persistence.OneToOne;
  * and map it into the table 'card' of a database
  */
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+//@JsonIgnoreProperties({"HibernateLazyInitializer", "Handler"})
 public class Card extends PanacheEntityBase {
     @Id
     private String cardId;
 
-    @OneToOne(targetEntity = Employee.class, mappedBy = "card")
+    @OneToOne(targetEntity = Employee.class, mappedBy = "card", fetch = FetchType.LAZY)
     private Employee employee;
     private int cardPassCode;
-    private double cardBalance;
 
-    public String getCardId() {
-        return cardId;
-    }
+    //  When registering a card, CardBalance should be set to zero
+    //  later 'topUp' will update the balance
+    //  @JsonIgnore will remove the field from the json body request
+    //  as cardBalance value is set by default to zero
+    @JsonIgnore
+    private double cardBalance = 0.0;
 
-    public void setCardId(String cardId) {
-        this.cardId = cardId;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public int getCardPassCode() {
-        return cardPassCode;
-    }
-
-    public void setCardPassCode(int cardPassCode) {
-        this.cardPassCode = cardPassCode;
-    }
-
-    public double getCardBalance() {
-        return cardBalance;
-    }
-
-    public void setCardBalance(double cardBalance) {
-        this.cardBalance = cardBalance;
-    }
-
-    @Override
-    public String toString() {
-        return "Card{" +
-            "cardId='" + cardId + '\'' +
-            ", employee=" + employee +
-            ", cardPassCode=" + cardPassCode +
-            ", cardBalance=" + cardBalance +
-            '}';
-    }
+    @OneToMany(targetEntity = TopUp.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
+        mappedBy = "card")
+    @JsonIgnore
+    private List<TopUp> topUp;
 }

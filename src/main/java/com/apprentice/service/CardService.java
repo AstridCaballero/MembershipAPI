@@ -27,7 +27,16 @@ public class CardService {
         cardRepository.persist(card);
     }
 
+    /**
+     * Returns Card information by cardId
+     */
+
     public Card findCard(final String cardId) {
         return cardRepository.findByCardId(cardId);
+    }
+
+    public void updateBalance(final String cardId, final double cardBalance) {
+        Card card = cardRepository.findByCardId(cardId);
+        card.setCardBalance(cardBalance);
     }
 }
