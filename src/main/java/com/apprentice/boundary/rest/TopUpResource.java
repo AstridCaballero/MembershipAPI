@@ -44,14 +44,14 @@ public class TopUpResource {
     public Response topUpCard(@RequestBody final TopUp topUp) {
         // The topUp object includes a card attribute. So, I fetched the card attribute by cardId and store it
         final String cardId = topUp.getCard().getCardId();
-        final Card card = cardService.findCard(topUp.getCard().getCardId());
+        final Card card = cardService.findCard(cardId);
 
         // Get the current balance from Card and the topUp amount then calculate the new balance
         double currentBalance = card.getCardBalance();
         double newBalance = topUp.getTopUpAmount() + currentBalance;
         LOGGER.info("New balance: " + newBalance);
 
-        cardService.updateBalance(card.getCardId(), newBalance);
+        cardService.updateBalance(cardId, newBalance);
         LOGGER.info("TopUp updated");
 
         topUpService.registerTopUp(topUp);
