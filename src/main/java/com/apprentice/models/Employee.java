@@ -16,10 +16,14 @@ import javax.persistence.*;
 @ToString
 public class Employee extends PanacheEntityBase {
 
+    // Card and Employee shared primary key Id. this makes 'select' easier
     @Id
+    private String cardId;
     private String employeeId;
 
-    @OneToOne(targetEntity = Card.class, cascade = CascadeType.ALL)
+    // Card and Employee shared primary key Id
+    @OneToOne
+    @MapsId
     @JoinColumn(name = "cardId")
     @JsonIgnore
     private Card card;

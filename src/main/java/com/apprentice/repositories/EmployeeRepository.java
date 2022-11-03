@@ -13,7 +13,8 @@ import javax.enterprise.context.ApplicationScoped;
 //@ApplicationScoped allows Quarkus to recognise this class and inject it when called
 @ApplicationScoped
 public class EmployeeRepository implements PanacheRepository<Employee> {
-    public Employee findByEmployeeId(final String employeeId) {
-        return find("employeeId", employeeId).firstResult();
+    public Employee findByCardId(final String cardId) {
+        return find("cardId", cardId).firstResult();
     }
+
 }

@@ -2,10 +2,9 @@ package com.apprentice.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.List;
@@ -17,16 +16,26 @@ import java.util.List;
  */
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-//@JsonIgnoreProperties({"HibernateLazyInitializer", "Handler"})
 public class Card extends PanacheEntityBase {
     @Id
     private String cardId;
 
-    @OneToOne(targetEntity = Employee.class, mappedBy = "card", fetch = FetchType.LAZY)
+    // @OneToOne associations are by default 'Eager',
+    // meaning it will fetch a record early incurring
+    // in bad performance because it will fetch the association
+    // issuing unnecessary query 'selects' for every association
+    // even if the association is not initialised. This is called N+1 query problems
+    // I tried using a LAZY association but that lead to "LazyInitializationException"
+    // The solution is to use @Fetch(FetchMode.JOIN), this tells hibernate that when calling
+    // Card to issue an INNER JOIN with Employee so that information can be accessed too.
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL)
+    @Fetch(FetchMode.JOIN)
     private Employee employee;
+
     private int cardPassCode;
 
     //  When registering a card, CardBalance should be set to zero
@@ -40,4 +49,10 @@ public class Card extends PanacheEntityBase {
         mappedBy = "card")
     @JsonIgnore
     private List<TopUp> topUp;
+
+//    This method allows for Card to persist employee
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+        employee.setCard(this);
+    }
 }

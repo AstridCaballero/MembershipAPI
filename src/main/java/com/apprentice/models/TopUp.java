@@ -23,7 +23,7 @@ public class TopUp {
     //   The below attribute @ManyToOne relationship doesn't include CascadeType.PERSIST
     //   Because when a TopUp object is created (persisted) we don't want to persist a Card Object
     //   as this already exists
-    @ManyToOne(targetEntity = Card.class, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
+    @ManyToOne(targetEntity = Card.class, fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "cardId")
     private Card card;
 

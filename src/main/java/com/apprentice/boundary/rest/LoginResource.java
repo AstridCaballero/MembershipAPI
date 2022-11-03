@@ -18,10 +18,9 @@ import javax.ws.rs.core.Response;
 
 //@ApplicationScoped allows Quarkus to recognise this interface and inject it when called
 @ApplicationScoped
-@Tag(name = "Service to login user")
+@Tag(name = "Login screen")
 @Path("/login")
 public class LoginResource {
-
     private static final Logger LOGGER = Logger.getLogger(LoginResource.class);
     @Inject
     CardService cardService;
@@ -43,16 +42,15 @@ public class LoginResource {
     @APIResponse(responseCode = "200", description = "Card is registered")
     @APIResponse(responseCode = "404", description = "Card is not found")
     @APIResponse(responseCode = "500", description = "Internal Server Error")
-    public Response findCard(@PathParam("cardId") final String cardId,
+    public Response findEmployeeCard(@PathParam("cardId") final String cardId,
                              @PathParam("cardPassCode") final int cardPassCode) {
         final Card card = cardService.findCard(cardId);
-        LOGGER.info(card.toString());
+        final Employee employee = card.getEmployee();
+
         if (card != null) {
-            if (card.getCardPassCode() == cardPassCode) {
-                final Employee employee = card.getEmployee();
-                LOGGER.info(employee.toString());
+            if (card.getEmployee().getCard().getCardPassCode() == cardPassCode) {
                 return Response.ok("Welcome " + employee.getEmployeeName() + "!\n" +
-                    "Balance: £" + card.getCardBalance()).build();
+                    "Balance: £" + employee.getCard().getCardBalance()).build();
             } else {
                 return Response.ok("four-digit code is wrong, try again ").status(Response.Status.NOT_FOUND).build();
             }
@@ -73,12 +71,11 @@ public class LoginResource {
     @APIResponse(responseCode = "201", description = "Card registration successful")
     @APIResponse(responseCode = "500", description = "Internal Server Error")
     public Response registerCard(@RequestBody final Card card) {
-        // First persist the child class
-        employeeService.registerEmployee(card.getEmployee());
-        LOGGER.info("Employee persisted");
-        // Then persist the parent class
+        // Card and Employee shared primary key ID so by persisting Card,
+        // Employee also gets persisted (Cascade), it uses the 'setEmployee(Employee employee)'
+        // method from Card entity
         cardService.registerCard(card);
-        LOGGER.info("Card persisted");
+        LOGGER.info("Employee and Card persisted");
         return Response.ok(card).status(Response.Status.CREATED).build();
     }
 }
