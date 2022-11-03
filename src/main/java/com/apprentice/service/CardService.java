@@ -22,12 +22,22 @@ public class CardService {
     /**
      * Stores Card information
      */
-
     public void registerCard(final Card card) {
         cardRepository.persist(card);
     }
 
+    /**
+     * Returns Card information by cardId
+     */
     public Card findCard(final String cardId) {
         return cardRepository.findByCardId(cardId);
+    }
+
+    /**
+     * Updates card's balance
+     */
+    public void updateBalance(final String cardId, final double cardBalance) {
+        Card card = cardRepository.findByCardId(cardId);
+        card.setCardBalance(cardBalance);
     }
 }

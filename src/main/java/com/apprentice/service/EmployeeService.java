@@ -27,7 +27,10 @@ public class EmployeeService {
         employeeRepository.persist(employee);
     }
 
-    public Employee findEmployee(final String employeeId) {
-        return employeeRepository.findByEmployeeId(employeeId);
+    /**
+     * Returns Employee information by employeeId
+     */
+    public Employee findEmployee(final String cardId) {
+        return employeeRepository.findByCardId(cardId);
     }
 }

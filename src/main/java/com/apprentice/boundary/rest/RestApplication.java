@@ -17,7 +17,7 @@ import javax.ws.rs.core.Application;
 
 @LoginConfig(authMethod = "MP-JWT", realmName = "apprentice")
 @ApplicationPath("/api")
-@OpenAPIDefinition(info = @Info(title = "REST application", version = "1.0.0"), components =
+@OpenAPIDefinition(info = @Info(title = "Membership API REST application", version = "1.0.0"), components =
 @Components(securitySchemes = {
         @SecurityScheme(securitySchemeName = "JWT", type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT", in = SecuritySchemeIn.HEADER)}))
 public class RestApplication extends Application {

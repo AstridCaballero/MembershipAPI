@@ -2,16 +2,28 @@ package com.apprentice.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class Employee extends PanacheEntityBase {
 
+    // Card and Employee shared primary key Id. this makes 'select' easier
     @Id
+    private String cardId;
     private String employeeId;
 
-    @OneToOne(targetEntity = Card.class, cascade = CascadeType.ALL)
+    // Card and Employee shared primary key Id
+    @OneToOne
+    @MapsId
     @JoinColumn(name = "cardId")
     @JsonIgnore
     private Card card;
@@ -20,54 +32,4 @@ public class Employee extends PanacheEntityBase {
     private String employeeEmail;
     private String employeeMobileNumber;
 
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public Card getCard() {
-        return card;
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
-    }
-
-    public String getEmployeeName() {
-        return employeeName;
-    }
-
-    public void setEmployeeName(String employeeName) {
-        this.employeeName = employeeName;
-    }
-
-    public String getEmployeeEmail() {
-        return employeeEmail;
-    }
-
-    public void setEmployeeEmail(String employeeEmail) {
-        this.employeeEmail = employeeEmail;
-    }
-
-    public String getEmployeeMobileNumber() {
-        return employeeMobileNumber;
-    }
-
-    public void setEmployeeMobileNumber(String employeeMobileNumber) {
-        this.employeeMobileNumber = employeeMobileNumber;
-    }
-
-    @Override
-    public String toString() {
-        return "Employee{" +
-            "employeeId='" + employeeId + '\'' +
-            ", card=" + card +
-            ", employeeName='" + employeeName + '\'' +
-            ", employeeEmail='" + employeeEmail + '\'' +
-            ", employeeMobileNumber='" + employeeMobileNumber + '\'' +
-            '}';
-    }
 }

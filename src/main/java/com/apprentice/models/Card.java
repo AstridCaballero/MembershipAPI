@@ -1,10 +1,13 @@
 package com.apprentice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * This entity contains the attributes that represent the fields of a table 'card' of a DB
@@ -12,54 +15,44 @@ import javax.persistence.OneToOne;
  * and map it into the table 'card' of a database
  */
 @Entity
+@Data
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 public class Card extends PanacheEntityBase {
     @Id
     private String cardId;
 
-    @OneToOne(targetEntity = Employee.class, mappedBy = "card")
+    // @OneToOne associations are by default 'Eager',
+    // meaning it will fetch a record early incurring
+    // in bad performance because it will fetch the association
+    // issuing unnecessary query 'selects' for every association
+    // even if the association is not initialised. This is called N+1 query problems
+    // I tried using a LAZY association but that lead to "LazyInitializationException"
+    // The solution is to use @Fetch(FetchMode.JOIN), this tells hibernate that when calling
+    // Card to issue an INNER JOIN with Employee so that information can be accessed too.
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL)
+    @Fetch(FetchMode.JOIN)
     private Employee employee;
+
     private int cardPassCode;
-    private double cardBalance;
 
-    public String getCardId() {
-        return cardId;
-    }
+    //  When registering a card, CardBalance should be set to zero
+    //  later 'topUp' will update the balance
+    //  @JsonIgnore will remove the field from the json body request
+    //  as cardBalance value is set by default to zero
+    @JsonIgnore
+    private double cardBalance = 0.0;
 
-    public void setCardId(String cardId) {
-        this.cardId = cardId;
-    }
+    @OneToMany(targetEntity = TopUp.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
+        mappedBy = "card")
+    @JsonIgnore
+    private List<TopUp> topUp;
 
-    public Employee getEmployee() {
-        return employee;
-    }
-
+//    This method allows for Card to persist employee
     public void setEmployee(Employee employee) {
         this.employee = employee;
-    }
-
-    public int getCardPassCode() {
-        return cardPassCode;
-    }
-
-    public void setCardPassCode(int cardPassCode) {
-        this.cardPassCode = cardPassCode;
-    }
-
-    public double getCardBalance() {
-        return cardBalance;
-    }
-
-    public void setCardBalance(double cardBalance) {
-        this.cardBalance = cardBalance;
-    }
-
-    @Override
-    public String toString() {
-        return "Card{" +
-            "cardId='" + cardId + '\'' +
-            ", employee=" + employee +
-            ", cardPassCode=" + cardPassCode +
-            ", cardBalance=" + cardBalance +
-            '}';
+        employee.setCard(this);
     }
 }
