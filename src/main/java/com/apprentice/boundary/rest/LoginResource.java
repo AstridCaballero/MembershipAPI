@@ -45,16 +45,19 @@ public class LoginResource {
     public Response findEmployeeCard(@PathParam("cardId") final String cardId,
                              @PathParam("cardPassCode") final int cardPassCode) {
         final Card card = cardService.findCard(cardId);
-        final Employee employee = card.getEmployee();
 
+        // If card is registered then card is not null
         if (card != null) {
-            if (card.getEmployee().getCard().getCardPassCode() == cardPassCode) {
-
+        // Check four-digit passCode provided by Employee is associated with the card, if so then return Name and balance
+            if (card.getCardPassCode() == cardPassCode) {
+                final Employee employee = card.getEmployee();
                 return Response.ok(String.format("Welcome %s! your Balance is £ %.2f ", employee.getEmployeeName(), employee.getCard().getCardBalance())).build();
             } else {
-                return Response.ok("four-digit code is wrong, try again ").status(Response.Status.NOT_FOUND).build();
+                // four-digit passCode provided by Employee is not associated with the card
+                return Response.ok("four-digit code is wrong, try again").status(Response.Status.NOT_FOUND).build();
             }
         }
+        // If card is registered then card is null
         return Response.ok("Card is not registered").status(Response.Status.NOT_FOUND).build();
     }
 
