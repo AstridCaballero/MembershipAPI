@@ -28,7 +28,7 @@ public class EmployeeService {
     }
 
     /**
-     * Returns Employee information by employeeId
+     * Returns Employee information by cardId
      */
     public Employee findEmployee(final String cardId) {
         return employeeRepository.findByCardId(cardId);

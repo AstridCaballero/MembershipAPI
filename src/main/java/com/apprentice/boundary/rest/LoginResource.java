@@ -49,8 +49,8 @@ public class LoginResource {
 
         if (card != null) {
             if (card.getEmployee().getCard().getCardPassCode() == cardPassCode) {
-                return Response.ok("Welcome " + employee.getEmployeeName() + "!\n" +
-                    "Balance: £" + employee.getCard().getCardBalance()).build();
+
+                return Response.ok(String.format("Welcome %s! your Balance is £ %.2f ", employee.getEmployeeName(), employee.getCard().getCardBalance())).build();
             } else {
                 return Response.ok("four-digit code is wrong, try again ").status(Response.Status.NOT_FOUND).build();
             }
