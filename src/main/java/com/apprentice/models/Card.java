@@ -45,8 +45,8 @@ public class Card extends PanacheEntityBase {
     @JsonIgnore
     private double cardBalance = 0.0;
 
-    @OneToMany(targetEntity = TopUp.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH},
-        mappedBy = "card")
+    @OneToMany(targetEntity = TopUp.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
+    @Fetch(FetchMode.JOIN)
     @JsonIgnore
     private List<TopUp> topUp;
 
