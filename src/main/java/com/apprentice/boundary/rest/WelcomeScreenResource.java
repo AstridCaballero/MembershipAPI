@@ -1,8 +1,10 @@
 package com.apprentice.boundary.rest;
 
 import com.apprentice.models.Card;
+import com.apprentice.models.OrderEmployee;
 import com.apprentice.models.TopUp;
 import com.apprentice.service.CardService;
+import com.apprentice.service.OrderEmployeeService;
 import com.apprentice.service.TopUpService;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -11,10 +13,7 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -29,6 +28,9 @@ public class WelcomeScreenResource {
 
     @Inject
     TopUpService topUpService;
+
+    @Inject
+    OrderEmployeeService orderEmployeeService;
 
     /**
      * This Post request takes amount to top up card, creates a record in topUp table and updates balance in Card table
@@ -58,6 +60,38 @@ public class WelcomeScreenResource {
         LOGGER.info("TopUp persisted");
 
         return Response.ok(topUp).status(Response.Status.CREATED).build();
+    }
+
+    /**
+     * This Post request takes amount to top up card, creates a record in topUp table and updates balance in Card table
+     * @param orderEmployee
+     * @return orderEmployee in Json format
+     */
+    @POST
+    @Path("/createOrder")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @APIResponse(responseCode = "201", description = "Order created")
+    @APIResponse(responseCode = "500", description = "Internal Server Error")
+    public Response createOrder(@RequestBody final OrderEmployee orderEmployee) {
+        // The orderEmployee object includes a card attribute.
+        orderEmployeeService.createEmptyOrder(orderEmployee);
+        LOGGER.info("OrderEmployee persisted");
+        return Response.ok(orderEmployee).status(Response.Status.CREATED).build();
+    }
+
+
+    @PUT
+    @Path("/updateOrder")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateOrderEmployeeTotal(@RequestBody final OrderEmployee orderEmployee) {
+        orderEmployeeService.updateOrderEmployee(orderEmployee);
+        OrderEmployee updatedOrderEmployeeTotal = orderEmployeeService.findById(orderEmployee.getOrderEmployeeId());
+        if(updatedOrderEmployeeTotal != null){
+            return Response.ok(updatedOrderEmployeeTotal).build();
+        }
+        return  Response.ok("Order not  found").status(Response.Status.NOT_FOUND).build();
     }
 
 }
