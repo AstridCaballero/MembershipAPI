@@ -5,6 +5,7 @@ import com.apprentice.models.Employee;
 import com.apprentice.service.CardService;
 import com.apprentice.service.EmployeeService;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -29,7 +30,7 @@ public class LoginResource {
     EmployeeService employeeService;
 
     /**
-     * Retrieves the name of the Employee if card is registered
+     * GET request that retrieves the name of the Employee if card is registered
      * @param cardId
      * @param cardPassCode
      * @return String
@@ -42,8 +43,11 @@ public class LoginResource {
     @APIResponse(responseCode = "200", description = "Card is registered")
     @APIResponse(responseCode = "404", description = "Card is not found")
     @APIResponse(responseCode = "500", description = "Internal Server Error")
-    public Response findEmployeeCard(@PathParam("cardId") final String cardId,
-                             @PathParam("cardPassCode") final int cardPassCode) {
+    public Response findEmployeeCard(
+        @Parameter(description = "input example: r7jTG7dqBy5wGO4L")
+        @PathParam("cardId") final String cardId,
+        @Parameter(description = "input example: 1234")
+        @PathParam("cardPassCode") final int cardPassCode) {
         final Card card = cardService.findCard(cardId);
 
         // If card is registered then card is not null
@@ -63,17 +67,32 @@ public class LoginResource {
 
 
     /**
-     * This Post request takes the Employee information, creates a record in Employee table and a record in Card table
+     * POST request takes the Employee information, creates a record in Employee table and a record in Card table
      * @param card
      * @return Card in Json format
      */
     @POST
     @Path("/create")
+    @Operation(summary = "Registers the card and stores Employee details")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @APIResponse(responseCode = "201", description = "Card registration successful")
     @APIResponse(responseCode = "500", description = "Internal Server Error")
-    public Response registerCard(@RequestBody final Card card) {
+    public Response registerCard(
+        @RequestBody(description = """
+             JSON example input:           
+            {
+              "cardId": "r7jTG7dqBy5wGO6A",
+              "employee": {
+                "cardId": "r7jTG7dqBy5wGO6A",
+                "employeeId": "testId",
+                "employeeName": "testName",
+                "employeeEmail": "test@test.com",
+                "employeeMobileNumber": "00000 000000"
+              },
+              "cardPassCode": 1111
+            }""")
+        final Card card) {
         // Card and Employee shared primary key ID so by persisting Card,
         // Employee also gets persisted (Cascade), it uses the 'setEmployee(Employee employee)'
         // method from Card entity
