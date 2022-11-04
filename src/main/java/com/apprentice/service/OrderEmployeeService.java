@@ -25,17 +25,20 @@ public class OrderEmployeeService {
         orderEmployeeRepository.persist(orderEmployee);
     }
 
-
+    /**
+     * Returns OrderEmployee by id
+     */
     public OrderEmployee findById(Long orderEmployeeId) {
-        return orderEmployeeRepository.findByIdOptional(orderEmployeeId).orElse(null);
+        return orderEmployeeRepository.findById(orderEmployeeId);
     }
-    public void updateOrderEmployee(final OrderEmployee orderEmployee) {
-//        orderEmployeeRepository.update(
-//            "update from OrderEmployee set orderTotal = ?, where orderEmployeeId = ?",
-//            orderEmployee.getOrderTotal(), orderEmployee.getOrderEmployeeId());
 
+    /**
+     * Updates the total price ('orderTotal') to pay in an order ('OrderEmployee')
+     * @param orderEmployee
+     * @param orderProductsPrice
+     */
+    public void updateOrderEmployee(final OrderEmployee orderEmployee, final double orderProductsPrice) {
         OrderEmployee orderEmployeeToUpdate = orderEmployeeRepository.findById(orderEmployee.getOrderEmployeeId());
-        orderEmployeeToUpdate.setOrderTotal(orderEmployee.getOrderTotal());
-
+        orderEmployeeToUpdate.setOrderTotal(orderProductsPrice);
     }
 }

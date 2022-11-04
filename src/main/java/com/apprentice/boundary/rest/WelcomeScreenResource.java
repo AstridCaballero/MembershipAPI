@@ -2,9 +2,11 @@ package com.apprentice.boundary.rest;
 
 import com.apprentice.models.Card;
 import com.apprentice.models.OrderEmployee;
+import com.apprentice.models.OrderProducts;
 import com.apprentice.models.TopUp;
 import com.apprentice.service.CardService;
 import com.apprentice.service.OrderEmployeeService;
+import com.apprentice.service.OrderProductService;
 import com.apprentice.service.TopUpService;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -13,7 +15,10 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -31,6 +36,9 @@ public class WelcomeScreenResource {
 
     @Inject
     OrderEmployeeService orderEmployeeService;
+
+    @Inject
+    OrderProductService orderProductService;
 
     /**
      * This Post request takes amount to top up card, creates a record in topUp table and updates balance in Card table
@@ -80,18 +88,31 @@ public class WelcomeScreenResource {
         return Response.ok(orderEmployee).status(Response.Status.CREATED).build();
     }
 
-
-    @PUT
-    @Path("/updateOrder")
+    /**
+     * Post request to create an OrderProducts record and updates the OrderEmployee price
+     * @param orderProducts
+     * @return
+     */
+    @POST
+    @Path("/createOrderProduct")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateOrderEmployeeTotal(@RequestBody final OrderEmployee orderEmployee) {
-        orderEmployeeService.updateOrderEmployee(orderEmployee);
-        OrderEmployee updatedOrderEmployeeTotal = orderEmployeeService.findById(orderEmployee.getOrderEmployeeId());
-        if(updatedOrderEmployeeTotal != null){
-            return Response.ok(updatedOrderEmployeeTotal).build();
-        }
-        return  Response.ok("Order not  found").status(Response.Status.NOT_FOUND).build();
+    @APIResponse(responseCode = "201", description = "OrderProduct created")
+    @APIResponse(responseCode = "500", description = "Internal Server Error")
+    public Response createOrder(@RequestBody final OrderProducts orderProducts) {
+        // When a product is selected, then an OrderProducts record is created with
+        // default quantity of One and its respective price
+        Long orderProductId = orderProductService.storeOrderProduct(orderProducts);
+        LOGGER.info("orderProducts persisted");
+
+        //Get the persisted orderProducts
+        OrderProducts orderProductsPersisted = orderProductService.findByOrderProductId(orderProductId);
+        //find the OrderEmployee
+        OrderEmployee orderEmployee = orderEmployeeService.findById(orderProductsPersisted.getOrderEmployee().getOrderEmployeeId());
+        //Update OrderEmployee total
+        orderEmployeeService.updateOrderEmployee(orderEmployee, orderProductsPersisted.getOrderProductsPrice());
+        LOGGER.info("OrderEmployee total updated");
+        return Response.ok(orderProducts).status(Response.Status.CREATED).build();
     }
 
 }
