@@ -65,7 +65,7 @@ public class LoginResource {
     /**
      * This Post request takes the Employee information, creates a record in Employee table and a record in Card table
      * @param card
-     * @return card in Json format
+     * @return Card in Json format
      */
     @POST
     @Path("/create")

@@ -11,15 +11,15 @@ import java.util.List;
 
 /**
  * This entity contains the attributes that represent the fields of a table 'card' of a DB
- * it is usign Object Relational Mapping - ORM in order to take an object Card
+ * it is using Object Relational Mapping - ORM in order to take an object Card
  * and map it into the table 'card' of a database
  */
 @Entity
-@Data
-@EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
+@Data //Lombok takes care of the getters and setters
+@EqualsAndHashCode(callSuper = true) //Lombok takes care of the equals and hash methods
+@AllArgsConstructor //Lombok creates a constructor with all the attributes as args
+@NoArgsConstructor //Lombok creates a default empty constructor
+@ToString //Lombok overrides the .toString()
 public class Card extends PanacheEntityBase {
     @Id
     private String cardId;
@@ -48,11 +48,21 @@ public class Card extends PanacheEntityBase {
     @OneToMany(targetEntity = TopUp.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @Fetch(FetchMode.JOIN)
     @JsonIgnore
-    private List<TopUp> topUp;
+    private List<TopUp> topUpList;
 
-//    This method allows for Card to persist employee
+    @OneToMany(targetEntity = TopUp.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
+    @Fetch(FetchMode.JOIN)
+    @JsonIgnore
+    private List<OrderEmployee> orderEmployeeList;
+
+
+    // This method allows for Card to persist employee
     public void setEmployee(Employee employee) {
         this.employee = employee;
         employee.setCard(this);
+    }
+
+    public void setCardBalance(double amount) {
+        this.cardBalance += amount;
     }
 }

@@ -9,14 +9,19 @@ import lombok.ToString;
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 
+/**
+ * This entity contains the attributes that represent the fields of a table 'TopUp' of a DB
+ * it is using Object Relational Mapping - ORM in order to take an object TopUp
+ * and map it into the table 'TopUp' of a database
+ */
 @Entity
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
+@Data //Lombok takes care of the getters and setters
+@AllArgsConstructor //Lombok creates a constructor with all the attributes as args
+@NoArgsConstructor //Lombok creates a default empty constructor
+@ToString //Lombok overrides the .toString()
 public class TopUp {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //to create the id automatically
     @JsonIgnore
     private Long topUpId;
 
