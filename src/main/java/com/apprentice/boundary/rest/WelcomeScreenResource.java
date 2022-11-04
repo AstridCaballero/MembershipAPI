@@ -4,10 +4,8 @@ import com.apprentice.models.Card;
 import com.apprentice.models.OrderEmployee;
 import com.apprentice.models.OrderProducts;
 import com.apprentice.models.TopUp;
-import com.apprentice.service.CardService;
-import com.apprentice.service.OrderEmployeeService;
-import com.apprentice.service.OrderProductService;
-import com.apprentice.service.TopUpService;
+import com.apprentice.service.*;
+import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -15,10 +13,7 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -39,6 +34,9 @@ public class WelcomeScreenResource {
 
     @Inject
     OrderProductService orderProductService;
+
+    @Inject
+    ProductService productService;
 
     /**
      * This Post request takes amount to top up card, creates a record in topUp table and updates balance in Card table
@@ -90,8 +88,9 @@ public class WelcomeScreenResource {
 
     /**
      * Post request to create an OrderProducts record and updates the OrderEmployee price
+     * Each OrderProduct is add up to the Order
      * @param orderProducts
-     * @return
+     * @return OrderProducts in Json format
      */
     @POST
     @Path("/createOrderProduct")
@@ -113,6 +112,21 @@ public class WelcomeScreenResource {
         orderEmployeeService.updateOrderEmployee(orderEmployee, orderProductsPersisted.getOrderProductsPrice());
         LOGGER.info("OrderEmployee total updated");
         return Response.ok(orderProducts).status(Response.Status.CREATED).build();
+    }
+
+    /**
+     * This Get request returns all the products from DB
+     * @return a set of Products in Json format
+     */
+    @GET
+    @Path("/allProducts")
+    @Operation(summary = "gets all the products")
+    @Produces(MediaType.APPLICATION_JSON)
+    @APIResponse(responseCode = "200", description = "Card is registered")
+    @APIResponse(responseCode = "404", description = "Card is not found")
+    @APIResponse(responseCode = "500", description = "Internal Server Error")
+    public Response findAllProducts() {
+        return Response.ok(productService.findAll()).build();
     }
 
 }

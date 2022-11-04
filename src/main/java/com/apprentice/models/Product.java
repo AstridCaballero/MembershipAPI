@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 /**
  * This entity contains the attributes that represent the fields of a table 'Product' of a DB
@@ -28,7 +30,7 @@ public class Product {
     private double productPrice;
 
     @OneToMany(targetEntity = OrderProducts.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
-//    @Fetch(FetchMode.JOIN)
+    @Fetch(FetchMode.JOIN)
     @JsonIgnore
-    private List<OrderProducts> orderProductsList;
+    private Set<OrderProducts> orderProductsList; //Got MultipleBagFetchException, so using 'Set' instead of 'List' solves the issue
 }
