@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response;
 
 @ApplicationScoped
 @Tag(name = "Welcome screen")
-@Path("/welcome")
+@Path("{cardId}/welcome")
 public class WelcomeScreenResource {
     private static final Logger LOGGER = Logger.getLogger(WelcomeScreenResource.class);
 
@@ -188,5 +188,33 @@ public class WelcomeScreenResource {
         LOGGER.info("orderEmployee total updated");
 
         return Response.ok("OrderProduct updated in order").build();
+    }
+
+    /**
+     * This request will be a POST if there was a table to store the transaction
+     * so for the prototype scope I only want to update the Card's balance
+     * PUT request to update 'cardBalance' from Card
+     * @param orderEmployeeId
+     * @return //TODO
+     */
+    @PUT
+    @Path("/order/{orderEmployeeId}/payment")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @APIResponse(responseCode = "201", description = "Top up successful")
+    @APIResponse(responseCode = "500", description = "Internal Server Error")
+    public Response orderPayment(@PathParam("cardId") final String cardId,
+                                 @PathParam("orderEmployeeId") final Long orderEmployeeId) {
+        //Get orderTotal.
+        double orderTotal = orderEmployeeService.findById(orderEmployeeId).getOrderTotal();
+
+        //check if card has balance > than the orderTotal
+        if (cardService.isBalanceGreaterThanPayment(cardId, orderTotal)) {
+                //update Card balance. orderTotal turned negative to enable subtraction
+            cardService.updateBalance(cardId, orderTotal * -1);
+            return Response.ok("Payment successful").build();
+        } else {
+            return Response.ok("Not enough funds, please top up your card").status(Response.Status.BAD_REQUEST).build();
+        }
     }
 }

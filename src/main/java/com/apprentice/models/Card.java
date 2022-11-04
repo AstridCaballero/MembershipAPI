@@ -56,9 +56,13 @@ public class Card extends PanacheEntityBase {
     private List<OrderEmployee> orderEmployeeList;
 
 
-//    This method allows for Card to persist employee
+    // This method allows for Card to persist employee
     public void setEmployee(Employee employee) {
         this.employee = employee;
         employee.setCard(this);
+    }
+
+    public void setCardBalance(double amount) {
+        this.cardBalance += amount;
     }
 }

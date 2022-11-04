@@ -36,8 +36,16 @@ public class CardService {
     /**
      * Updates card's balance
      */
-    public void updateBalance(final String cardId, final double cardBalance) {
+    public void updateBalance(final String cardId, final double amount) {
         Card card = cardRepository.findByCardId(cardId);
-        card.setCardBalance(cardBalance);
+        card.setCardBalance(amount);
+    }
+
+    /**
+     * Returns boolean if balance is greater or equal to orderTotal
+     *
+     */
+    public boolean isBalanceGreaterThanPayment(final String cardId, final double payment) {
+        return cardRepository.findByCardId(cardId).getCardBalance() >= payment;
     }
 }

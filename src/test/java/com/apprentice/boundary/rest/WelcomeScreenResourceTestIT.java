@@ -59,7 +59,7 @@ class WelcomeScreenResourceTestIT {
             .contentType(MediaType.APPLICATION_JSON)
             .body(jsonObject.toString())
             .when()
-            .post("http://localhost:8100/api/welcome/topUp")
+            .post("http://localhost:8100/api/r7jTG7dqBy5wGO4L/welcome/topUp")
             .then()
             .body(containsString("\"topUpAmount\":7.0"))
             .statusCode(Response.Status.CREATED.getStatusCode());
