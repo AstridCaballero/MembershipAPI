@@ -22,6 +22,7 @@ import java.util.List;
 public class OrderEmployee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //to create the id automatically
+//    @JsonIgnore
     private Long orderEmployeeId;
 
     @ManyToOne(targetEntity = Card.class, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})

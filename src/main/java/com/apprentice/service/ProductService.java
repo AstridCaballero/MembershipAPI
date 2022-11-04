@@ -40,5 +40,4 @@ public class ProductService {
     public Product findByProductId(final Long productId) {
         return productRepository.findById(productId);
     }
-
 }

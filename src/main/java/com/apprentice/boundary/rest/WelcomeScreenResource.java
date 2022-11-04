@@ -74,7 +74,7 @@ public class WelcomeScreenResource {
      * @return orderEmployee in Json format
      */
     @POST
-    @Path("/createOrder")
+    @Path("/order/createOrder")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @APIResponse(responseCode = "201", description = "Order created")
@@ -93,7 +93,7 @@ public class WelcomeScreenResource {
      * @return OrderProducts in Json format
      */
     @POST
-    @Path("/createOrderProduct")
+    @Path("/order/createOrderProduct")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @APIResponse(responseCode = "201", description = "OrderProduct created")
@@ -101,15 +101,18 @@ public class WelcomeScreenResource {
     public Response createOrder(@RequestBody final OrderProducts orderProducts) {
         // When a product is selected, then an OrderProducts record is created with
         // default quantity of One and its respective price
-        Long orderProductId = orderProductService.storeOrderProduct(orderProducts);
+        Long orderProductsId = orderProductService.storeOrderProduct(orderProducts);
         LOGGER.info("orderProducts persisted");
 
+        //TODO add if to check that orderProductsId is not null else trhow not found
+
+        //Update OrderEmployee
         //Get the persisted orderProducts
-        OrderProducts orderProductsPersisted = orderProductService.findByOrderProductId(orderProductId);
+        OrderProducts orderProductsPersisted = orderProductService.findByOrderProductId(orderProductsId);
         //find the OrderEmployee
-        OrderEmployee orderEmployee = orderEmployeeService.findById(orderProductsPersisted.getOrderEmployee().getOrderEmployeeId());
+        Long orderEmployeeId = orderProductsPersisted.getOrderEmployee().getOrderEmployeeId();
         //Update OrderEmployee total
-        orderEmployeeService.updateOrderEmployee(orderEmployee, orderProductsPersisted.getOrderProductsPrice());
+        orderEmployeeService.updateOrderEmployee(orderEmployeeId, orderProductsPersisted.getOrderProductsPrice());
         LOGGER.info("OrderEmployee total updated");
         return Response.ok(orderProducts).status(Response.Status.CREATED).build();
     }
@@ -119,7 +122,7 @@ public class WelcomeScreenResource {
      * @return a set of Products in Json format
      */
     @GET
-    @Path("/allProducts")
+    @Path("/order/allProducts")
     @Operation(summary = "gets all the products")
     @Produces(MediaType.APPLICATION_JSON)
     @APIResponse(responseCode = "200", description = "Card is registered")
@@ -129,4 +132,61 @@ public class WelcomeScreenResource {
         return Response.ok(productService.findAll()).build();
     }
 
+    /**
+     * Delete request to remove a product ('OrderProducts') from the order ('OrderEmployee')
+     * and updates the total price to pay ('orderTotal')
+     * @param orderProductsId
+     * @return String
+     */
+    @DELETE
+    @Path("/order/{orderEmployeeId}/{orderProductsId}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteOrderProducts(@PathParam("orderEmployeeId") final Long orderEmployeeId,
+                                        @PathParam("orderProductsId") final Long orderProductsId) {
+        //Get the persisted orderProducts
+        OrderProducts orderProductsPersisted = orderProductService.findByOrderProductId(orderProductsId);
+
+        //TODO add if to check that orderProductsPersisted and orderEmployeeToUpdate are not null else throw not found
+
+        //get price and turn negative it, so it will be subtracted from the orderEmployeeTotal
+        double priceToSubtract = orderProductsPersisted.getOrderProductsPrice() * -1;
+
+        //Remove OrderProduct
+        orderProductService.removeOrderProduct(orderProductsId);
+        LOGGER.info("orderProducts deleted");
+
+        //Update OrderEmployee total
+        orderEmployeeService.updateOrderEmployee(orderEmployeeId, priceToSubtract);
+        LOGGER.info("OrderEmployee total updated");
+
+        return Response.ok("OrderProduct removed from order").build();
+    }
+
+    /**
+     * PUT request to update OrderProduct and OrderEmployee if
+     * employee increases the quantity of an exiting OrderProduct
+     * @param orderEmployeeId
+     * @param orderProductsId
+     * @return
+     */
+    @PUT
+    @Path("/order/{orderEmployeeId}/{orderProductsId}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateOrderProducts(@PathParam("orderEmployeeId") final Long orderEmployeeId,
+                                        @PathParam("orderProductsId") final Long orderProductsId) {
+        //update the persisted orderProducts
+        orderProductService.updateOrderProduct(orderProductsId);
+        LOGGER.info("orderProducts updated");
+
+        //TODO add if statement to verify nulls
+
+        //Update OrderEmployee
+        OrderProducts orderProducts = orderProductService.findByOrderProductId(orderProductsId);
+        orderEmployeeService.updateOrderEmployee(orderEmployeeId, orderProducts.getProduct().getProductPrice());
+        LOGGER.info("orderEmployee total updated");
+
+        return Response.ok("OrderProduct updated in order").build();
+    }
 }

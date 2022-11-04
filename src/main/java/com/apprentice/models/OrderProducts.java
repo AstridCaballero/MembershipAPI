@@ -1,5 +1,6 @@
 package com.apprentice.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,14 @@ public class OrderProducts {
     @ManyToOne(targetEntity = OrderEmployee.class)
     @JoinColumn(name = "orderId")
     private OrderEmployee orderEmployee;
-
+    @JsonIgnore
     private int orderProductsQuantity = 1;
     private double orderProductsPrice;
+
+    /**
+     * product quantity goes up one unit at the time
+     */
+    public void setOrderProductsQuantity() {
+        this.orderProductsQuantity += 1;
+    }
 }

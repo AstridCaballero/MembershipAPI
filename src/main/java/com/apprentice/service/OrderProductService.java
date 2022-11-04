@@ -28,7 +28,7 @@ public class OrderProductService {
      */
     public Long storeOrderProduct(final OrderProducts orderProducts) {
         //find the product and its price per unit
-        Product product= productService.findByProductId(orderProducts.getProduct().getProductId());
+        final Product product= productService.findByProductId(orderProducts.getProduct().getProductId());
         double priceOrderProducts = product.getProductPrice();
         //set the price to the orderProducts that will be created
         orderProducts.setOrderProductsPrice(priceOrderProducts);
@@ -64,13 +64,14 @@ public class OrderProductService {
     /**
      * Updates quantity and price of the OrderProducts
      */
-    public void updateOrderProduct(final OrderProducts orderProducts) {
-        //update quantity
-        OrderProducts orderProductsToUpdate = orderProductRepository.findById(orderProducts.getOrderProductsId());
-        orderProductsToUpdate.setOrderProductsQuantity(orderProducts.getOrderProductsQuantity());
+    public void updateOrderProduct(final Long orderProductsId) {
+        //update quantity of the orderProduct
+        OrderProducts orderProductsToUpdate = orderProductRepository.findById(orderProductsId);
+        orderProductsToUpdate.setOrderProductsQuantity();
+        final int quantity = orderProductsToUpdate.getOrderProductsQuantity();
         //Get price of product
-        Product product = orderProductsToUpdate.getProduct();
-        double newPriceOrderProducts = product.getProductPrice() * orderProducts.getOrderProductsQuantity();
+        final Product product = productService.findByProductId(orderProductsToUpdate.getProduct().getProductId());
+        final double newPriceOrderProducts = product.getProductPrice() * quantity;
         //update price
         orderProductsToUpdate.setOrderProductsPrice(newPriceOrderProducts);
     }

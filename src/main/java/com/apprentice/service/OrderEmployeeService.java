@@ -34,11 +34,12 @@ public class OrderEmployeeService {
 
     /**
      * Updates the total price ('orderTotal') to pay in an order ('OrderEmployee')
-     * @param orderEmployee
-     * @param orderProductsPrice
+     * by adding the price of one unit of the Product
+     * @param orderEmployeeId
+     * @param ProductPrice
      */
-    public void updateOrderEmployee(final OrderEmployee orderEmployee, final double orderProductsPrice) {
-        OrderEmployee orderEmployeeToUpdate = orderEmployeeRepository.findById(orderEmployee.getOrderEmployeeId());
-        orderEmployeeToUpdate.setOrderTotal(orderProductsPrice);
+    public void updateOrderEmployee(final Long orderEmployeeId, final double ProductPrice) {
+        OrderEmployee orderEmployeeToUpdate = orderEmployeeRepository.findById(orderEmployeeId);
+        orderEmployeeToUpdate.setOrderTotal(ProductPrice);
     }
 }
