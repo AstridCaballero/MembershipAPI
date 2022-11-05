@@ -6,6 +6,8 @@ import com.apprentice.models.OrderProducts;
 import com.apprentice.models.TopUp;
 import com.apprentice.service.*;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -21,8 +23,14 @@ import javax.ws.rs.core.Response;
 @Tag(name = "Welcome screen")
 @Path("{cardId}/welcome")
 public class WelcomeScreenResource {
+    /**
+     * Create a LOGGER to Log information
+     */
     private static final Logger LOGGER = Logger.getLogger(WelcomeScreenResource.class);
 
+    /**
+     * Inject the services
+     */
     @Inject
     CardService cardService;
 
@@ -39,17 +47,39 @@ public class WelcomeScreenResource {
     ProductService productService;
 
     /**
-     * This Post request takes amount to top up card, creates a record in topUp table and updates balance in Card table
+     * POST request takes amount to top up card, creates a record in topUp table and updates balance in Card table
      * @param topUp
      * @return topUp in Json format
      */
     @POST
     @Path("/topUp")
+    @Operation(summary = "Top ups the card")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @APIResponse(responseCode = "201", description = "Top up successful")
+    @APIResponse(responseCode = "201", description = "Top up successful",
+    content = {
+        @Content(mediaType = "application/json", example = """
+            {
+              "card": {
+                "cardId": "r7jTG7dqBy5wGO4L",
+                "employee": null,
+                "cardPassCode": 0
+              },
+              "topUpAmount": 20
+            }
+            """)
+    })
     @APIResponse(responseCode = "500", description = "Internal Server Error")
-    public Response topUpCard(@RequestBody final TopUp topUp) {
+    public Response topUpCard(
+        @RequestBody(description = """
+            Input example:
+            {
+              "card": {
+                "cardId": "r7jTG7dqBy5wGO4L"
+              },
+              "topUpAmount": 20
+            }""")
+        final TopUp topUp) {
         // The topUp object includes a card attribute. So, I fetched the card attribute by cardId and store it
         final String cardId = topUp.getCard().getCardId();
         final Card card = cardService.findCard(cardId);
@@ -69,17 +99,44 @@ public class WelcomeScreenResource {
     }
 
     /**
-     * This Post request takes amount to top up card, creates a record in topUp table and updates balance in Card table
+     * POST request creates a record in OrderEmployee table and links it to the Card table
      * @param orderEmployee
-     * @return orderEmployee in Json format
+     * @return OrderEmployee in Json format
      */
     @POST
     @Path("/order/createOrder")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Registers the card and stores Employee details")
+    @Consumes({MediaType.APPLICATION_JSON})
     @Produces(MediaType.APPLICATION_JSON)
-    @APIResponse(responseCode = "201", description = "Order created")
+    @APIResponse(responseCode = "201", description = "Order created",
+        content = {
+            @Content(mediaType = "application/json", example = """
+                {
+                  "orderEmployeeId": 1,
+                  "card": {
+                    "cardId": "r7jTG7dqBy5wGO4L",
+                    "employee": {
+                      "cardId": "r7jTG7dqBy5wGO4L"
+                    },
+                    "cardPassCode": 0
+                  },
+                  "orderTotal": 0
+                }""")
+        })
     @APIResponse(responseCode = "500", description = "Internal Server Error")
-    public Response createOrder(@RequestBody final OrderEmployee orderEmployee) {
+    public Response createOrder(
+        @RequestBody(description = """
+            Not all the fields are required, 
+            so use this JSON example input to create an empty order:
+            { \s
+              "card": {
+                "cardId": "r7jTG7dqBy5wGO4L",
+                "employee": {
+                  "cardId": "r7jTG7dqBy5wGO4L"     \s
+                }
+              }
+            }""")
+        final OrderEmployee orderEmployee) {
         // The orderEmployee object includes a card attribute.
         orderEmployeeService.createEmptyOrder(orderEmployee);
         LOGGER.info("OrderEmployee persisted");
@@ -87,18 +144,50 @@ public class WelcomeScreenResource {
     }
 
     /**
-     * Post request to create an OrderProducts record and updates the OrderEmployee price
-     * Each OrderProduct is add up to the Order
+     * POST request to create an OrderProducts record and updates the OrderEmployee price
+     * Each OrderProduct is adding up to the Order
      * @param orderProducts
      * @return OrderProducts in Json format
      */
     @POST
     @Path("/order/createOrderProduct")
+    @Operation(summary = "Creates an OrderProduct to track selected products")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @APIResponse(responseCode = "201", description = "OrderProduct created")
+    @APIResponse(responseCode = "201", description = "OrderProduct created",
+    content = {
+        @Content(mediaType = "application/json", example = """
+            {
+              "orderProductsId": 1,
+              "product": {
+                "productId": 1,
+                "productName": null,
+                "productPrice": 0
+              },
+              "orderEmployee": {
+                "orderEmployeeId": 1,
+                "card": null,
+                "orderTotal": 0
+              },
+              "orderProductsPrice": 2
+            }
+            """)
+    })
     @APIResponse(responseCode = "500", description = "Internal Server Error")
-    public Response createOrder(@RequestBody final OrderProducts orderProducts) {
+    public Response createOrder(
+        @RequestBody(description = """
+            Input example:
+            { 
+              "product": {
+                "productId": 1
+              },
+              "orderEmployee": {
+                "orderEmployeeId": 1
+                }
+              }
+            }
+            """)
+        final OrderProducts orderProducts) {
         // When a product is selected, then an OrderProducts record is created with
         // default quantity of One and its respective price
         Long orderProductsId = orderProductService.storeOrderProduct(orderProducts);
@@ -118,32 +207,56 @@ public class WelcomeScreenResource {
     }
 
     /**
-     * This Get request returns all the products from DB
+     * GET request returns all the products from DB
      * @return a set of Products in Json format
      */
     @GET
     @Path("/order/allProducts")
-    @Operation(summary = "gets all the products")
+    @Operation(summary = "Retrieves all the products")
     @Produces(MediaType.APPLICATION_JSON)
-    @APIResponse(responseCode = "200", description = "Card is registered")
-    @APIResponse(responseCode = "404", description = "Card is not found")
+    @APIResponse(responseCode = "200", description = "Products Found",
+        content = {
+            @Content(mediaType = "application/json", example = """
+                [
+                  {
+                    "productId": 1,
+                    "productName": "Tuna sandwich",
+                    "productPrice": 2
+                  },
+                  {
+                    "productId": 2,
+                    "productName": "Orange juice",
+                    "productPrice": 1
+                  }
+                ]""")
+        })
     @APIResponse(responseCode = "500", description = "Internal Server Error")
     public Response findAllProducts() {
         return Response.ok(productService.findAll()).build();
     }
 
     /**
-     * Delete request to remove a product ('OrderProducts') from the order ('OrderEmployee')
+     * DELETE request to remove a product ('OrderProducts') from the order ('OrderEmployee')
      * and updates the total price to pay ('orderTotal')
+     * @param orderEmployeeId
      * @param orderProductsId
      * @return String
      */
     @DELETE
     @Path("/order/{orderEmployeeId}/{orderProductsId}")
+    @Operation(summary = "Deletes orderProduct and updates Order total")
     @Consumes(MediaType.TEXT_PLAIN)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteOrderProducts(@PathParam("orderEmployeeId") final Long orderEmployeeId,
-                                        @PathParam("orderProductsId") final Long orderProductsId) {
+    @Produces(MediaType.TEXT_PLAIN)
+    @APIResponse(responseCode = "200", description = "OrderProduct removed",
+        content = {
+            @Content(mediaType = "text/plain", example = "OrderProduct removed from order")
+        })
+    @APIResponse(responseCode = "500", description = "Internal Server Error")
+    public Response deleteOrderProducts(
+        @Parameter(description = "Input example: 1")
+        @PathParam("orderEmployeeId") final Long orderEmployeeId,
+        @Parameter(description = "Input example: 1")
+        @PathParam("orderProductsId") final Long orderProductsId) {
         //Get the persisted orderProducts
         OrderProducts orderProductsPersisted = orderProductService.findByOrderProductId(orderProductsId);
 
@@ -168,14 +281,23 @@ public class WelcomeScreenResource {
      * employee increases the quantity of an exiting OrderProduct
      * @param orderEmployeeId
      * @param orderProductsId
-     * @return
+     * @return String
      */
     @PUT
     @Path("/order/{orderEmployeeId}/{orderProductsId}")
+    @Operation(summary = "Updates orderProduct quantity and price when another item of the same product is added. It updates the order total.")
     @Consumes(MediaType.TEXT_PLAIN)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response updateOrderProducts(@PathParam("orderEmployeeId") final Long orderEmployeeId,
-                                        @PathParam("orderProductsId") final Long orderProductsId) {
+    @Produces(MediaType.TEXT_PLAIN)
+    @APIResponse(responseCode = "200", description = "OrderProduct updated",
+        content = {
+            @Content(mediaType = "application/text", example = "OrderProduct updated in order")
+         })
+    @APIResponse(responseCode = "500", description = "Internal Server Error")
+    public Response updateOrderProducts(
+        @Parameter(description = "Input example: 1")
+        @PathParam("orderEmployeeId") final Long orderEmployeeId,
+        @Parameter(description = "Input example: 1")
+        @PathParam("orderProductsId") final Long orderProductsId) {
         //update the persisted orderProducts
         orderProductService.updateOrderProduct(orderProductsId);
         LOGGER.info("orderProducts updated");
@@ -194,17 +316,23 @@ public class WelcomeScreenResource {
      * This request will be a POST if there was a table to store the transaction
      * so for the prototype scope I only want to update the Card's balance
      * PUT request to update 'cardBalance' from Card
+     * @param cardId
      * @param orderEmployeeId
-     * @return //TODO
+     * @return String
      */
     @PUT
     @Path("/order/{orderEmployeeId}/payment")
+    @Operation(summary = "Takes care of the payment and updates the card's balance if successful")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    @APIResponse(responseCode = "201", description = "Top up successful")
+    @Produces(MediaType.TEXT_PLAIN)
+    @APIResponse(responseCode = "200", description = "Payment successful")
+    @APIResponse(responseCode = "400", description = "Insufficient funds - Bad request")
     @APIResponse(responseCode = "500", description = "Internal Server Error")
-    public Response orderPayment(@PathParam("cardId") final String cardId,
-                                 @PathParam("orderEmployeeId") final Long orderEmployeeId) {
+    public Response orderPayment(
+        @Parameter(description = "Input example: r7jTG7dqBy5wGO4L")
+        @PathParam("cardId") final String cardId,
+        @Parameter(description = "Input example: 1")
+        @PathParam("orderEmployeeId") final Long orderEmployeeId) {
         //Get orderTotal.
         double orderTotal = orderEmployeeService.findById(orderEmployeeId).getOrderTotal();
 
@@ -212,6 +340,7 @@ public class WelcomeScreenResource {
         if (cardService.isBalanceGreaterThanPayment(cardId, orderTotal)) {
                 //update Card balance. orderTotal turned negative to enable subtraction
             cardService.updateBalance(cardId, orderTotal * -1);
+            LOGGER.info("Card balance updated");
             return Response.ok("Payment successful").build();
         } else {
             return Response.ok("Not enough funds, please top up your card").status(Response.Status.BAD_REQUEST).build();

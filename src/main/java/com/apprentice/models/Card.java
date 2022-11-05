@@ -45,11 +45,15 @@ public class Card extends PanacheEntityBase {
     @JsonIgnore
     private double cardBalance = 0.0;
 
+    // Maps the bidirectional relationship between Card and TopUp
+    // One Card can have zero or many top ups
     @OneToMany(targetEntity = TopUp.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @Fetch(FetchMode.JOIN)
     @JsonIgnore
     private List<TopUp> topUpList;
 
+    //Maps the bidirectional relationship between Card and OrderEmployee
+    // One Card can have zero or many OrderEmployee
     @OneToMany(targetEntity = TopUp.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @Fetch(FetchMode.JOIN)
     @JsonIgnore
@@ -62,6 +66,8 @@ public class Card extends PanacheEntityBase {
         employee.setCard(this);
     }
 
+    //setBalance is edited here as the amount passed as parameter
+    // needs to make a cumulative sum/subtraction with the existing balance
     public void setCardBalance(double amount) {
         this.cardBalance += amount;
     }
