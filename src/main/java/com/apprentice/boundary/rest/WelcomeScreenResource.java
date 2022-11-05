@@ -357,22 +357,23 @@ public class WelcomeScreenResource {
     }
 
     /**
-     * LOG OUT
+     * LOG OUT. It is better to use POST for logging out but as I am not posting anything
+     * to the DB I decided to use a GET
      */
 
 
     /**
-     * POST request to log out
+     * GET request to log out
      * @param cardId from the current path session
-     * @param CardIdInput provided by the user when touches the Sensitive PC
+     * @param cardIdSecondTime provided by the user when touches the Sensitive PC
      * @return String
      */
-    @POST
+    @GET
     @Path("/logout/{cardIdSecondTime}")
     @Operation(summary = "Gets users cardId input and logs out")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
-    @APIResponse(responseCode = "200", description = "Log Out")
+    @APIResponse(responseCode = "201", description = "Log Out")
     @APIResponse(responseCode = "500", description = "Internal Server Error")
     public Response logOut(@PathParam("cardId") final String cardId, @PathParam("cardIdSecondTime") final String cardIdSecondTime) {
 

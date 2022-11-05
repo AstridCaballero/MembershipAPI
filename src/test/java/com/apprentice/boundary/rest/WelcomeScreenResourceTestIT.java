@@ -25,7 +25,7 @@ class WelcomeScreenResourceTestIT {
      */
     @Test
     @Order(5)
-    @DisplayName("Creates a Card and an Employee record in each table")
+    @DisplayName("Passes if Card and an Employee record in each table are created")
     public void postCardAndEmployeeTest() {
         // The below Json structure to create the Card and Employee during registration,
         // is written as a JsonObject.
@@ -70,7 +70,7 @@ class WelcomeScreenResourceTestIT {
      */
     @Test
     @Order(6)
-    @DisplayName("Creates an OrderEmployee and its associations")
+    @DisplayName("Passes if an OrderEmployee is created and its associations")
     public void postCreateOrderTest() {
         // The below Json structure to create the Card and Employee during registration,
         // is written as a JsonObject.
@@ -120,7 +120,7 @@ class WelcomeScreenResourceTestIT {
 
     @Test
     @Order(7)
-    @DisplayName("Creates an OrderProduct and its associations")
+    @DisplayName("Passes if an OrderProduct is created and its associations")
     public void postCreateOrderProductTest() {
         // The below Json structure to create the Card and Employee during registration,
         // is written as a JsonObject.
@@ -179,7 +179,7 @@ class WelcomeScreenResourceTestIT {
      */
     @Test
     @Order(8)
-    @DisplayName("Checks that it gets all the products")
+    @DisplayName("Passes if all the products are retrieve")
     public void getAllProductsTest() {
         //Using RestAssured
         given()
@@ -211,7 +211,7 @@ class WelcomeScreenResourceTestIT {
      */
     @Test
     @Order(10)
-    @DisplayName("Checks that OrderProduct quantity and price gets updated when increases in one unit")
+    @DisplayName("Passes if the OrderProduct quantity and price gets updated when increases in one unit")
     public void putOrderProductUpdateTest() {
         //Using RestAssured
         given()
@@ -226,7 +226,7 @@ class WelcomeScreenResourceTestIT {
      */
     @Test
     @Order(11)
-    @DisplayName("Checks that the balance of a Card gets updated when an order is placed for payment and is successful")
+    @DisplayName("Passes if the balance of a Card gets updated when an order is placed for payment and is successful")
     public void putOrderPaymentTest() {
         //Using RestAssured
         given()
@@ -239,7 +239,7 @@ class WelcomeScreenResourceTestIT {
 
     @Test
     @Order(12)
-    @DisplayName("Checks that the balance of a Card gets updated when an order is placed for payment and card has insufficient funds")
+    @DisplayName("Passes if the balance of a Card gets updated when an order is placed for payment and card has insufficient funds")
     public void putOrderBiggerThanBalancePaymentTest() {
         //Using RestAssured
         given()
@@ -248,6 +248,23 @@ class WelcomeScreenResourceTestIT {
             .then()
             .body(containsString("Insufficient funds"))
             .statusCode(Response.Status.BAD_REQUEST.getStatusCode());
+    }
+
+    /**
+     * Test for the Post request to log out
+     */
+    @Test
+    @Order(13)
+    @DisplayName("Passes if cardId entered the second time is the same as cardId of current session")
+    public void logOutTest() {
+        //Using RestAssured
+        given()
+            .when()
+            .get("http://localhost:8100/api/r7jTG7dqBy5wGO4L/welcome/logout/r7jTG7dqBy5wGO4L")
+            .then()
+            .body(containsString("Goodbye!"))
+            .statusCode(Response.Status.OK.getStatusCode());
+
     }
 
 }
