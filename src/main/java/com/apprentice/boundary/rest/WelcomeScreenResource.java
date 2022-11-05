@@ -182,7 +182,7 @@ public class WelcomeScreenResource {
             Input example:
             { 
               "product": {
-                "productId": 1
+                "productId": 2
               },
               "orderEmployee": {
                 "orderEmployeeId": 1                
