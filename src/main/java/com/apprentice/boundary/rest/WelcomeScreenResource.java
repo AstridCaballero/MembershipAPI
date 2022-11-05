@@ -249,7 +249,7 @@ public class WelcomeScreenResource {
     @Produces(MediaType.TEXT_PLAIN)
     @APIResponse(responseCode = "200", description = "OrderProduct removed",
         content = {
-            @Content(mediaType = "application/text", example = "OrderProduct removed from order")
+            @Content(mediaType = "text/plain", example = "OrderProduct removed from order")
         })
     @APIResponse(responseCode = "500", description = "Internal Server Error")
     public Response deleteOrderProducts(
