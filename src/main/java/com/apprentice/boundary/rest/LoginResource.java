@@ -108,7 +108,7 @@ public class LoginResource {
 
 
     /**
-     * The iddle timeout of the system will ideally be managed ny the UI
+     * The iddle timeout of the system will ideally be managed by an UI
      * but as I don't have that, I am creating an endpoint that will update
      * a front end that will be build later (Assumption)
      */
