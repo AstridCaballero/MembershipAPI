@@ -23,8 +23,14 @@ import javax.ws.rs.core.Response;
 @Tag(name = "Welcome screen")
 @Path("{cardId}/welcome")
 public class WelcomeScreenResource {
+    /**
+     * Create a LOGGER to Log information
+     */
     private static final Logger LOGGER = Logger.getLogger(WelcomeScreenResource.class);
 
+    /**
+     * Inject the services
+     */
     @Inject
     CardService cardService;
 

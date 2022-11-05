@@ -18,10 +18,14 @@ public class OrderProducts {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //to create the id automatically
     private Long orderProductsId;
 
+    // Maps the bidirectional relationship between OrderProducts and Product
+    // Many OrderProducts must have one Product type
     @ManyToOne(targetEntity = Product.class)
     @JoinColumn(name = "productId")
     private Product product;
 
+    // Maps the bidirectional relationship between OrderProducts and orderEmployee
+    // Many OrderProducts must belong to one orderEmployee
     @ManyToOne(targetEntity = OrderEmployee.class)
     @JoinColumn(name = "orderId")
     private OrderEmployee orderEmployee;

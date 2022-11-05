@@ -25,6 +25,8 @@ public class Employee extends PanacheEntityBase {
     private String employeeId;
 
     // Card and Employee shared primary key Id
+    // Maps the bidirectional relationship between Employee and Card
+    // One Employee must have one Card
     @OneToOne
     @MapsId
     @JoinColumn(name = "cardId")

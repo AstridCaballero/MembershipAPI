@@ -29,6 +29,8 @@ public class Product {
     private String productName;
     private double productPrice;
 
+    // Maps the bidirectional relationship between Product and orderProducts
+    // One Product can be in one or many orderProducts
     @OneToMany(targetEntity = OrderProducts.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @Fetch(FetchMode.JOIN)
     @JsonIgnore

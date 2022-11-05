@@ -22,15 +22,18 @@ import java.util.List;
 public class OrderEmployee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //to create the id automatically
-//    @JsonIgnore
     private Long orderEmployeeId;
 
+    // Maps the bidirectional relationship between OrderEmployee and Card
+    // One or Many OrderEmployee must belong to one Card
     @ManyToOne(targetEntity = Card.class, cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "cardId")
     private Card card;
 
+    // Maps the bidirectional relationship between OrderEmployee and orderProducts
+    // One OrderEmployee can have one or many orderProducts
     @OneToMany(targetEntity = OrderProducts.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
-//    @Fetch(FetchMode.JOIN)
+//    @Fetch(FetchMode.JOIN) //TODO
     @JsonIgnore
     private List<OrderProducts> orderProductsList;
 
