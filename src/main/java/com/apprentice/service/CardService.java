@@ -6,6 +6,7 @@ import com.apprentice.repositories.CardRepository;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.time.ZonedDateTime;
 
 /**
  * Implementing business logic
@@ -47,5 +48,13 @@ public class CardService {
      */
     public boolean isBalanceGreaterThanPayment(final String cardId, final double payment) {
         return cardRepository.findByCardId(cardId).getCardBalance() >= payment;
+    }
+
+    /**
+     * Update lastInteractionDateTime to track inactivity
+     */
+    public void updateLastInteractionDateTime(final String cardId) {
+        Card card = cardRepository.findByCardId(cardId);
+        card.setLastInteractionDateTime(ZonedDateTime.now());
     }
 }

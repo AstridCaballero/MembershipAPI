@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.ZonedDateTime;
 
 //@ApplicationScoped allows Quarkus to recognise this interface and inject it when called
 @ApplicationScoped
@@ -55,6 +56,10 @@ public class LoginResource {
         // Check four-digit passCode provided by Employee is associated with the card, if so then return Name and balance
             if (card.getCardPassCode() == cardPassCode) {
                 final Employee employee = card.getEmployee();
+
+                //set time of interaction to track inactivity
+                cardService.updateLastInteractionDateTime(card.getCardId());
+
                 return Response.ok(String.format("Welcome %s! your Balance is £ %.2f ", employee.getEmployeeName(), employee.getCard().getCardBalance())).build();
             } else {
                 // four-digit passCode provided by Employee is not associated with the card
@@ -99,5 +104,39 @@ public class LoginResource {
         cardService.registerCard(card);
         LOGGER.info("Employee and Card persisted");
         return Response.ok(card).status(Response.Status.CREATED).build();
+    }
+
+
+    /**
+     * The iddle timeout of the system will ideally be managed ny the UI
+     * but as I don't have that, I am creating an endpoint that will update
+     * a front end that will be build later (Assumption)
+     */
+
+    /**
+     *GET request to update front-end with inactivity
+     * @param cardId
+     * @return
+     */
+    @GET
+    @Path("/{cardId}")
+    @Operation(summary = "Checks time since last interaction and logs out after N minutes of inactivity")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response timeout(
+        @Parameter(description = "input example: r7jTG7dqBy5wGO4L")
+        @PathParam("cardId")
+        final String cardId) {
+        Card card = cardService.findCard(cardId);
+        ZonedDateTime currentDateTime = ZonedDateTime.now();
+        int differenceMinutes = (int) (currentDateTime.toEpochSecond() - card.getLastInteractionDateTime().toEpochSecond())/60;
+
+        //TODO replace 2 for a constant
+        //timeout after 5 minutes of inactivity
+        if (differenceMinutes >= 2) {
+            return Response.ok("timeout").build();
+        } else {
+            return Response.ok("active").build();
+        }
     }
 }
