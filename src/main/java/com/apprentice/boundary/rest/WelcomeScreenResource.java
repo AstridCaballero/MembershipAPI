@@ -50,6 +50,10 @@ public class WelcomeScreenResource {
     ProductService productService;
 
     /**
+     * TOP UP
+     */
+
+    /**
      * POST request takes amount to top up card, creates a record in topUp table and updates balance in Card table
      * @param topUp
      * @return topUp in Json format
@@ -100,6 +104,10 @@ public class WelcomeScreenResource {
 
         return Response.ok(topUp).status(Response.Status.CREATED).build();
     }
+
+    /**
+     * ORDER
+     */
 
     /**
      * POST request creates a record in OrderEmployee table and links it to the Card table
@@ -347,4 +355,34 @@ public class WelcomeScreenResource {
             return Response.ok("Insufficient funds, please top up your card").status(Response.Status.BAD_REQUEST).build();
         }
     }
+
+    /**
+     * LOG OUT. It is better to use POST for logging out but as I am not posting anything
+     * to the DB I decided to use a GET
+     */
+
+
+    /**
+     * GET request to log out
+     * @param cardId from the current path session
+     * @param cardIdSecondTime provided by the user when touches the Sensitive PC
+     * @return String
+     */
+    @GET
+    @Path("/logout/{cardIdSecondTime}")
+    @Operation(summary = "Gets users cardId input and logs out")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)
+    @APIResponse(responseCode = "201", description = "Log Out")
+    @APIResponse(responseCode = "500", description = "Internal Server Error")
+    public Response logOut(@PathParam("cardId") final String cardId, @PathParam("cardIdSecondTime") final String cardIdSecondTime) {
+
+        // If cardId provided equals the cardId in the session then logout
+        if (cardId.equals(cardIdSecondTime) ) {
+                return Response.ok("Goodbye!").build();
+        }
+        // If card is registered then card is null
+        return Response.ok("Card is not registered").status(Response.Status.NOT_FOUND).build();
+    }
+
 }
