@@ -57,8 +57,8 @@ public class OrderProductService {
     /**
      * Deletes OrderProducts
      */
-    public void removeOrderProduct(final Long orderProductsId) {
-        orderProductRepository.deleteById(orderProductsId);
+    public boolean removeOrderProduct(final Long orderProductsId) {
+        return orderProductRepository.deleteById(orderProductsId);
     }
 
     /**

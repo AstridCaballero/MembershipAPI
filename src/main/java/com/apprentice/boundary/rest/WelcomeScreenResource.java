@@ -19,6 +19,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import static io.undertow.httpcore.StatusCodes.INTERNAL_SERVER_ERROR;
+import static io.undertow.httpcore.StatusCodes.NO_CONTENT;
+
 @ApplicationScoped
 @Tag(name = "Welcome screen")
 @Path("{cardId}/welcome")
@@ -182,8 +185,7 @@ public class WelcomeScreenResource {
                 "productId": 1
               },
               "orderEmployee": {
-                "orderEmployeeId": 1
-                }
+                "orderEmployeeId": 1                
               }
             }
             """)
@@ -192,8 +194,6 @@ public class WelcomeScreenResource {
         // default quantity of One and its respective price
         Long orderProductsId = orderProductService.storeOrderProduct(orderProducts);
         LOGGER.info("orderProducts persisted");
-
-        //TODO add if to check that orderProductsId is not null else trhow not found
 
         //Update OrderEmployee
         //Get the persisted orderProducts
@@ -247,10 +247,7 @@ public class WelcomeScreenResource {
     @Operation(summary = "Deletes orderProduct and updates Order total")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
-    @APIResponse(responseCode = "200", description = "OrderProduct removed",
-        content = {
-            @Content(mediaType = "text/plain", example = "OrderProduct removed from order")
-        })
+    @APIResponse(responseCode = "204", description = "No Content, OrderProduct removed")
     @APIResponse(responseCode = "500", description = "Internal Server Error")
     public Response deleteOrderProducts(
         @Parameter(description = "Input example: 1")
@@ -259,21 +256,27 @@ public class WelcomeScreenResource {
         @PathParam("orderProductsId") final Long orderProductsId) {
         //Get the persisted orderProducts
         OrderProducts orderProductsPersisted = orderProductService.findByOrderProductId(orderProductsId);
+        if (orderProductsPersisted != null) {
+            //get price and turn negative it, so it will be subtracted from the orderEmployeeTotal
+            double priceToSubtract = orderProductsPersisted.getOrderProductsPrice() * -1;
 
-        //TODO add if to check that orderProductsPersisted and orderEmployeeToUpdate are not null else throw not found
+            //Remove OrderProduct
+            boolean orderProductDeleted = orderProductService.removeOrderProduct(orderProductsId);
+            LOGGER.info("orderProducts deleted");
 
-        //get price and turn negative it, so it will be subtracted from the orderEmployeeTotal
-        double priceToSubtract = orderProductsPersisted.getOrderProductsPrice() * -1;
+            //Update OrderEmployee total
+            orderEmployeeService.updateOrderEmployee(orderEmployeeId, priceToSubtract);
+            LOGGER.info("OrderEmployee total updated");
 
-        //Remove OrderProduct
-        orderProductService.removeOrderProduct(orderProductsId);
-        LOGGER.info("orderProducts deleted");
+            if (orderProductDeleted) {
+                return Response.status(NO_CONTENT).build();
+            } else {
+                return Response.status(INTERNAL_SERVER_ERROR).build();
+            }
+        } else {
+            return Response.ok("OrderProduct doesn't exists").status(NO_CONTENT).build();
 
-        //Update OrderEmployee total
-        orderEmployeeService.updateOrderEmployee(orderEmployeeId, priceToSubtract);
-        LOGGER.info("OrderEmployee total updated");
-
-        return Response.ok("OrderProduct removed from order").build();
+        }
     }
 
     /**
@@ -290,7 +293,7 @@ public class WelcomeScreenResource {
     @Produces(MediaType.TEXT_PLAIN)
     @APIResponse(responseCode = "200", description = "OrderProduct updated",
         content = {
-            @Content(mediaType = "application/text", example = "OrderProduct updated in order")
+            @Content(mediaType = "text/plain", example = "OrderProduct updated in order")
          })
     @APIResponse(responseCode = "500", description = "Internal Server Error")
     public Response updateOrderProducts(
@@ -301,8 +304,6 @@ public class WelcomeScreenResource {
         //update the persisted orderProducts
         orderProductService.updateOrderProduct(orderProductsId);
         LOGGER.info("orderProducts updated");
-
-        //TODO add if statement to verify nulls
 
         //Update OrderEmployee
         OrderProducts orderProducts = orderProductService.findByOrderProductId(orderProductsId);
@@ -343,7 +344,7 @@ public class WelcomeScreenResource {
             LOGGER.info("Card balance updated");
             return Response.ok("Payment successful").build();
         } else {
-            return Response.ok("Not enough funds, please top up your card").status(Response.Status.BAD_REQUEST).build();
+            return Response.ok("Insufficient funds, please top up your card").status(Response.Status.BAD_REQUEST).build();
         }
     }
 }

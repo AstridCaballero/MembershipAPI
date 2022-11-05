@@ -26,20 +26,20 @@ class LoginResourceTestIT {
     @Test
     @Order(1)
     @DisplayName("For registered card check a employee name and Card's current balance is displayed")
-    public void getEmployeeNameAndCardBalance() {
+    public void getEmployeeNameAndCardBalanceTest() {
         //Using RestAssured
         given()
             .when()
             .get("http://localhost:8100/api/login/r7jTG7dqBy5wGO4L/1234")
             .then()
-            .body(containsString("Welcome Magdalena Leon! your Balance is £ 0.00"))
+            .body(containsString("Welcome Magdalena Leon! your Balance is £ 10.00"))
             .statusCode(Response.Status.OK.getStatusCode());
     }
 
     @Test
     @Order(2)
     @DisplayName("For unregistered card get NOT FOUND message")
-    public void getMessageCardNotFound() {
+    public void getMessageCardNotFoundTest() {
         //Using RestAssured
         given()
             .when()
@@ -52,7 +52,7 @@ class LoginResourceTestIT {
     @Test
     @Order(3)
     @DisplayName("For registered card that provides wrong four-digit passCode get NOT FOUND message")
-    public void getMessageFourDigitNotFound() {
+    public void getMessageFourDigitNotFoundTest() {
         //Using RestAssured
         given()
             .when()
@@ -69,7 +69,7 @@ class LoginResourceTestIT {
     @Test
     @Order(4)
     @DisplayName("Creates a Card and an Employee record in each table")
-    public void postCardAndEmployee() {
+    public void postCardAndEmployeeTest() {
         // The below Json structure to create the Card and Employee during registration,
         // is written as a JsonObject
             //  {
