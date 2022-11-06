@@ -4,6 +4,7 @@ import com.apprentice.models.Card;
 import com.apprentice.models.Employee;
 import com.apprentice.service.CardService;
 import com.apprentice.service.EmployeeService;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
@@ -24,11 +25,18 @@ import java.time.ZonedDateTime;
 @Path("/login")
 public class LoginResource {
     private static final Logger LOGGER = Logger.getLogger(LoginResource.class);
+
+    // Inject services
     @Inject
     CardService cardService;
 
     @Inject
     EmployeeService employeeService;
+
+    // Inject Constant to use for tracking inactivity
+    @Inject
+    @ConfigProperty(name = "TIMEOUT_MINUTES")
+    int timeoutMinutes;
 
     /**
      * GET request that retrieves the name of the Employee if card is registered
@@ -131,9 +139,9 @@ public class LoginResource {
         ZonedDateTime currentDateTime = ZonedDateTime.now();
         int differenceMinutes = (int) (currentDateTime.toEpochSecond() - card.getLastInteractionDateTime().toEpochSecond())/60;
 
-        //TODO replace 2 for a constant
+
         //timeout after 5 minutes of inactivity
-        if (differenceMinutes >= 2) {
+        if (differenceMinutes >= timeoutMinutes) {
             return Response.ok("timeout").build();
         } else {
             return Response.ok("active").build();
