@@ -24,7 +24,7 @@ class WelcomeScreenResourceTestIT {
      * Test for the POST request to top Up a card and create a record of the transaction
      */
     @Test
-    @Order(5)
+    @Order(6)
     @DisplayName("Passes if Card and an Employee record in each table are created")
     public void postCardAndEmployeeTest() {
         // The below Json structure to create the Card and Employee during registration,
@@ -69,7 +69,7 @@ class WelcomeScreenResourceTestIT {
      * Test for the POST request to create an OrderEmployee and its associations
      */
     @Test
-    @Order(6)
+    @Order(7)
     @DisplayName("Passes if an OrderEmployee is created and its associations")
     public void postCreateOrderTest() {
         // The below Json structure to create the Card and Employee during registration,
@@ -119,7 +119,7 @@ class WelcomeScreenResourceTestIT {
      */
 
     @Test
-    @Order(7)
+    @Order(8)
     @DisplayName("Passes if an OrderProduct is created and its associations")
     public void postCreateOrderProductTest() {
         // The below Json structure to create the Card and Employee during registration,
@@ -178,7 +178,7 @@ class WelcomeScreenResourceTestIT {
      * Test for the Get all products request
      */
     @Test
-    @Order(8)
+    @Order(9)
     @DisplayName("Passes if all the products are retrieve")
     public void getAllProductsTest() {
         //Using RestAssured
@@ -195,7 +195,7 @@ class WelcomeScreenResourceTestIT {
      * Test for the Delete request of an OrderProducts
      */
     @Test
-    @Order(9)
+    @Order(10)
     @DisplayName("Checks an OrderProducts has been deleted")
     public void deleteOrderProductTest() {
         //Using RestAssured
@@ -210,7 +210,7 @@ class WelcomeScreenResourceTestIT {
      * Test for the Put request to update OrderProduct quantity and price
      */
     @Test
-    @Order(10)
+    @Order(11)
     @DisplayName("Passes if the OrderProduct quantity and price gets updated when increases in one unit")
     public void putOrderProductUpdateTest() {
         //Using RestAssured
@@ -225,7 +225,7 @@ class WelcomeScreenResourceTestIT {
      * Series of Tests for the Put request to update Card's balance when an order is placed for payment
      */
     @Test
-    @Order(11)
+    @Order(12)
     @DisplayName("Passes if the balance of a Card gets updated when an order is placed for payment and is successful")
     public void putOrderPaymentTest() {
         //Using RestAssured
@@ -238,7 +238,7 @@ class WelcomeScreenResourceTestIT {
     }
 
     @Test
-    @Order(12)
+    @Order(13)
     @DisplayName("Passes if the balance of a Card gets updated when an order is placed for payment and card has insufficient funds")
     public void putOrderBiggerThanBalancePaymentTest() {
         //Using RestAssured
@@ -254,7 +254,7 @@ class WelcomeScreenResourceTestIT {
      * Test for the Post request to log out
      */
     @Test
-    @Order(13)
+    @Order(14)
     @DisplayName("Passes if cardId entered the second time is the same as cardId of current session")
     public void logOutTest() {
         //Using RestAssured
@@ -264,7 +264,5 @@ class WelcomeScreenResourceTestIT {
             .then()
             .body(containsString("Goodbye!"))
             .statusCode(Response.Status.OK.getStatusCode());
-
     }
-
 }

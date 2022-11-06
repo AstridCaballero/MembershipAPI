@@ -121,5 +121,4 @@ class LoginResourceTestIT {
             .then()
             .body(containsString("timeout"));
     }
-
 }
