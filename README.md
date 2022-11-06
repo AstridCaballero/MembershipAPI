@@ -38,6 +38,8 @@ See h2 Console view here [h2 console]
 quarkus-junit5 2.13.0.final
 rest-assured 5.2.0
 
+To see tests template see [test]
+
 # API Documentation:
 
 ### API structure
@@ -69,3 +71,4 @@ See localhost:8081 page
 [import-test]: src/main/resources/META-INF/import-test.sql
 [h2 console]: documentation/h2_Console_View/H2%20in-memory%20DB.pdf
 [functional]: documentation/requirements/Functional%20Requirements.pdf
+[test]: documentation/test/Tests_API.pdf
