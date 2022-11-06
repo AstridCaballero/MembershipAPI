@@ -1,6 +1,8 @@
 package com.apprentice.boundary.rest;
 
+import com.apprentice.boundary.rest.profiles.TimeoutMinutesTestProfile;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.TestProfile;
 import org.junit.jupiter.api.*;
 
 import javax.inject.Inject;
@@ -14,6 +16,7 @@ import static org.hamcrest.core.StringContains.containsString;
 
 @QuarkusTest
 @Tag("Integration")
+@TestProfile(TimeoutMinutesTestProfile.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class LoginResourceTestIT {
     @Inject
@@ -68,7 +71,7 @@ class LoginResourceTestIT {
 
     @Test
     @Order(4)
-    @DisplayName("Creates a Card and an Employee record in each table")
+    @DisplayName("Test passes if creates a Card and an Employee record in each table")
     public void postCardAndEmployeeTest() {
         // The below Json structure to create the Card and Employee during registration,
         // is written as a JsonObject
@@ -103,4 +106,20 @@ class LoginResourceTestIT {
             .then()
             .statusCode(Response.Status.CREATED.getStatusCode());
     }
+
+    /**
+     * Test the Get request to check inactivity
+     */
+    @Test
+    @Order(5)
+    @DisplayName("Passes if timeout") //differenceMinutes >= timeoutMinutes // has been changed to zero
+    public void getTimeOutTest() {
+        //Using RestAssured
+        given()
+            .when()
+            .get("http://localhost:8100/api/login/r7jTG7dqBy5wGO4L")
+            .then()
+            .body(containsString("timeout"));
+    }
+
 }

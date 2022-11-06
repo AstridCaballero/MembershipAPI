@@ -7,6 +7,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -58,6 +59,9 @@ public class Card extends PanacheEntityBase {
     @Fetch(FetchMode.JOIN)
     @JsonIgnore
     private List<OrderEmployee> orderEmployeeList;
+
+    @JsonIgnore
+    private ZonedDateTime lastInteractionDateTime;
 
 
     // This method allows for Card to persist employee

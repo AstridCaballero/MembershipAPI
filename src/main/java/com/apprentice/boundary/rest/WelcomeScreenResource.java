@@ -102,6 +102,9 @@ public class WelcomeScreenResource {
         topUpService.registerTopUp(topUp);
         LOGGER.info("TopUp persisted");
 
+        //set time of interaction to track inactivity
+        cardService.updateLastInteractionDateTime(cardId);
+
         return Response.ok(topUp).status(Response.Status.CREATED).build();
     }
 
@@ -151,6 +154,10 @@ public class WelcomeScreenResource {
         // The orderEmployee object includes a card attribute.
         orderEmployeeService.createEmptyOrder(orderEmployee);
         LOGGER.info("OrderEmployee persisted");
+
+        //set time of interaction to track inactivity
+        cardService.updateLastInteractionDateTime(orderEmployee.getCard().getCardId());
+
         return Response.ok(orderEmployee).status(Response.Status.CREATED).build();
     }
 
@@ -211,6 +218,10 @@ public class WelcomeScreenResource {
         //Update OrderEmployee total
         orderEmployeeService.updateOrderEmployee(orderEmployeeId, orderProductsPersisted.getOrderProductsPrice());
         LOGGER.info("OrderEmployee total updated");
+
+        //set time of interaction to track inactivity
+        cardService.updateLastInteractionDateTime(orderProductsPersisted.getOrderEmployee().getCard().getCardId());
+
         return Response.ok(orderProducts).status(Response.Status.CREATED).build();
     }
 
@@ -276,6 +287,9 @@ public class WelcomeScreenResource {
             orderEmployeeService.updateOrderEmployee(orderEmployeeId, priceToSubtract);
             LOGGER.info("OrderEmployee total updated");
 
+            //set time of interaction to track inactivity
+            cardService.updateLastInteractionDateTime(orderProductsPersisted.getOrderEmployee().getCard().getCardId());
+
             if (orderProductDeleted) {
                 return Response.status(NO_CONTENT).build();
             } else {
@@ -283,7 +297,6 @@ public class WelcomeScreenResource {
             }
         } else {
             return Response.ok("OrderProduct doesn't exists").status(NO_CONTENT).build();
-
         }
     }
 
@@ -318,6 +331,10 @@ public class WelcomeScreenResource {
         orderEmployeeService.updateOrderEmployee(orderEmployeeId, orderProducts.getProduct().getProductPrice());
         LOGGER.info("orderEmployee total updated");
 
+        //set time of interaction to track inactivity
+        cardService.updateLastInteractionDateTime(orderProducts.getOrderEmployee().getCard().getCardId());
+
+
         return Response.ok("OrderProduct updated in order").build();
     }
 
@@ -342,10 +359,13 @@ public class WelcomeScreenResource {
         @PathParam("cardId") final String cardId,
         @Parameter(description = "Input example: 1")
         @PathParam("orderEmployeeId") final Long orderEmployeeId) {
+        //set time of interaction to track inactivity
+        cardService.updateLastInteractionDateTime(cardId);
+
         //Get orderTotal.
         double orderTotal = orderEmployeeService.findById(orderEmployeeId).getOrderTotal();
 
-        //check if card has balance > than the orderTotal
+        //check if card has balance >= than the orderTotal
         if (cardService.isBalanceGreaterThanPayment(cardId, orderTotal)) {
                 //update Card balance. orderTotal turned negative to enable subtraction
             cardService.updateBalance(cardId, orderTotal * -1);
@@ -360,8 +380,6 @@ public class WelcomeScreenResource {
      * LOG OUT. It is better to use POST for logging out but as I am not posting anything
      * to the DB I decided to use a GET
      */
-
-
     /**
      * GET request to log out
      * @param cardId from the current path session
@@ -384,5 +402,4 @@ public class WelcomeScreenResource {
         // If card is registered then card is null
         return Response.ok("Card is not registered").status(Response.Status.NOT_FOUND).build();
     }
-
 }

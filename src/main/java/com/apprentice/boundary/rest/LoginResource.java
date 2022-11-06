@@ -4,6 +4,7 @@ import com.apprentice.models.Card;
 import com.apprentice.models.Employee;
 import com.apprentice.service.CardService;
 import com.apprentice.service.EmployeeService;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.ZonedDateTime;
 
 //@ApplicationScoped allows Quarkus to recognise this interface and inject it when called
 @ApplicationScoped
@@ -23,11 +25,18 @@ import javax.ws.rs.core.Response;
 @Path("/login")
 public class LoginResource {
     private static final Logger LOGGER = Logger.getLogger(LoginResource.class);
+
+    // Inject services
     @Inject
     CardService cardService;
 
     @Inject
     EmployeeService employeeService;
+
+    // Inject Constant to use for tracking inactivity
+    @Inject
+    @ConfigProperty(name = "TIMEOUT_MINUTES")
+    int timeoutMinutes;
 
     /**
      * GET request that retrieves the name of the Employee if card is registered
@@ -55,6 +64,10 @@ public class LoginResource {
         // Check four-digit passCode provided by Employee is associated with the card, if so then return Name and balance
             if (card.getCardPassCode() == cardPassCode) {
                 final Employee employee = card.getEmployee();
+
+                //set time of interaction to track inactivity
+                cardService.updateLastInteractionDateTime(card.getCardId());
+
                 return Response.ok(String.format("Welcome %s! your Balance is £ %.2f ", employee.getEmployeeName(), employee.getCard().getCardBalance())).build();
             } else {
                 // four-digit passCode provided by Employee is not associated with the card
@@ -99,5 +112,39 @@ public class LoginResource {
         cardService.registerCard(card);
         LOGGER.info("Employee and Card persisted");
         return Response.ok(card).status(Response.Status.CREATED).build();
+    }
+
+
+    /**
+     * The iddle timeout of the system will ideally be managed by an UI
+     * but as I don't have that, I am creating an endpoint that will update
+     * a front end that will be build later (Assumption)
+     */
+
+    /**
+     *GET request to update front-end with inactivity
+     * @param cardId
+     * @return
+     */
+    @GET
+    @Path("/{cardId}")
+    @Operation(summary = "Checks time since last interaction and logs out after N minutes of inactivity")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response timeout(
+        @Parameter(description = "input example: r7jTG7dqBy5wGO4L")
+        @PathParam("cardId")
+        final String cardId) {
+        Card card = cardService.findCard(cardId);
+        ZonedDateTime currentDateTime = ZonedDateTime.now();
+        int differenceMinutes = (int) (currentDateTime.toEpochSecond() - card.getLastInteractionDateTime().toEpochSecond())/60;
+
+
+        //timeout after 5 minutes of inactivity
+        if (differenceMinutes >= timeoutMinutes) {
+            return Response.ok("timeout").build();
+        } else {
+            return Response.ok("active").build();
+        }
     }
 }

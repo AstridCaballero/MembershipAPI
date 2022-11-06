@@ -1,6 +1,6 @@
 ----1. Populate card table
 
-INSERT INTO card (cardId, cardPassCode, cardBalance) VALUES ('r7jTG7dqBy5wGO4L', '1234', 10.00);
+INSERT INTO card (cardId, cardPassCode, cardBalance, lastInteractionDateTime) VALUES ('r7jTG7dqBy5wGO4L', '1234', 10.00, CURRENT_TIMESTAMP);
 INSERT INTO card (cardId, cardPassCode, cardBalance) VALUES ('r7jTG7dqBy5wGO5k', '5678', 0.00);
 
 ----2. Populate Employee table
