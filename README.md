@@ -57,11 +57,14 @@ Can be found:
 - Online [System Workflow]
 - Here in project [System Workflow in folder]
 
-More information can be found at [trello agile board]
+More information can be found at [trello agile board] and this folder [agile board] contains
+
+- Screenshot of trello board in .png
+- all tickets of trello board in .pdf (It doesn't contain the attachments to the tickets, only the text)
 
 See localhost:8081 page
 
-[trello agile board]: https://trello.com/b/sKd4SgK2/synoptic-project-membership-api
+[trello agile board]: https://trello.com/invite/b/sKd4SgK2/ATTI5889f061bd9f84acf881467c7ed078ba71C1849A/synoptic-project-membership-api
 [DB model]: https://drive.google.com/file/d/158d_RRCAMzvkQAggmk-H2czs_RS2iPC3/view?usp=sharing
 [DB model in folder]: documentation/model_DB/DB_Catering_System.drawio.png
 [System Workflow]: https://drive.google.com/file/d/1w75-TmkBC9HULxGfh6feBDvGzmauZWzV/view?usp=sharing
@@ -72,3 +75,4 @@ See localhost:8081 page
 [h2 console]: documentation/h2_Console_View/H2%20in-memory%20DB.pdf
 [functional]: documentation/requirements/Functional%20Requirements.pdf
 [test]: documentation/test/Tests_API.pdf
+[agile board]: documentation/agile_Board
