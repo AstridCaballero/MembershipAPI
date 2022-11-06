@@ -196,7 +196,7 @@ class WelcomeScreenResourceTestIT {
      */
     @Test
     @Order(10)
-    @DisplayName("Checks an OrderProducts has been deleted")
+    @DisplayName("Passes if an OrderProducts has been deleted")
     public void deleteOrderProductTest() {
         //Using RestAssured
         given()
