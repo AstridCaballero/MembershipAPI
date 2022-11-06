@@ -28,7 +28,7 @@ class LoginResourceTestIT {
 
     @Test
     @Order(1)
-    @DisplayName("For registered card check a employee name and Card's current balance is displayed")
+    @DisplayName("Passes if registered card check a employee name and Card's current balance is displayed")
     public void getEmployeeNameAndCardBalanceTest() {
         //Using RestAssured
         given()
@@ -41,7 +41,7 @@ class LoginResourceTestIT {
 
     @Test
     @Order(2)
-    @DisplayName("For unregistered card get NOT FOUND message")
+    @DisplayName("Passes if unregistered card get NOT FOUND message")
     public void getMessageCardNotFoundTest() {
         //Using RestAssured
         given()
@@ -54,7 +54,7 @@ class LoginResourceTestIT {
 
     @Test
     @Order(3)
-    @DisplayName("For registered card that provides wrong four-digit passCode get NOT FOUND message")
+    @DisplayName("Passes if registered card that provides wrong four-digit passCode get NOT FOUND message")
     public void getMessageFourDigitNotFoundTest() {
         //Using RestAssured
         given()
@@ -71,7 +71,7 @@ class LoginResourceTestIT {
 
     @Test
     @Order(4)
-    @DisplayName("Test passes if creates a Card and an Employee record in each table")
+    @DisplayName("Passes if creates a Card and an Employee record in each table")
     public void postCardAndEmployeeTest() {
         // The below Json structure to create the Card and Employee during registration,
         // is written as a JsonObject
