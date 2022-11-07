@@ -1,7 +1,7 @@
 # MembershipAPI
 ## Synoptic Project Apprenticeship
 ### Overview
-Minimum Vial Product - MVP of a RESTful API to allow employees of Bows Formula One to:
+Minimum Viable Product - MVP of a RESTful API to allow employees of Bows Formula One to:
 - Register
 - Top up
 - Purchase
