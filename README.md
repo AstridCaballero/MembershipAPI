@@ -88,4 +88,4 @@ See localhost:8081 page
 [agile board]: documentation/agile_Board
 [issues]: https://github.com/AstridCaballero/MembershipAPI/issues?q=is%3Aissue+is%3Aclosed
 [PR]: https://github.com/AstridCaballero/MembershipAPI/pulls?q=is%3Apr+is%3Aclosed
-[NFR]: documentation/non_Functional_Req
+[NFR]: documentation/non_Functional_Req/Non-Functional%20requirements.pdf
