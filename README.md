@@ -30,6 +30,7 @@ To see the non-functional requirements go to [NFR]
 It includes the creation of: 
   - [issues] that I related to 
   - the [PR]s.
+  - [Github actions]
 
 ### For connection to h2 console go to
 ```bash
@@ -89,3 +90,4 @@ See localhost:8081 page
 [issues]: https://github.com/AstridCaballero/MembershipAPI/issues?q=is%3Aissue+is%3Aclosed
 [PR]: https://github.com/AstridCaballero/MembershipAPI/pulls?q=is%3Apr+is%3Aclosed
 [NFR]: documentation/non_Functional_Req/Non-Functional%20requirements.pdf
+[Github actions]: https://github.com/AstridCaballero/MembershipAPI/actions
