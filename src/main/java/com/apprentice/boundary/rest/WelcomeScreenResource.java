@@ -91,14 +91,11 @@ public class WelcomeScreenResource {
         final String cardId = topUp.getCard().getCardId();
         final Card card = cardService.findCard(cardId);
 
-        // Get the current balance from Card and the topUp amount then calculate the new balance
-        double currentBalance = card.getCardBalance();
-        double newBalance = topUp.getTopUpAmount() + currentBalance;
-        LOGGER.info("New balance: " + newBalance);
-
-        cardService.updateBalance(cardId, newBalance);
+        //Update Balance of card
+        cardService.updateBalance(cardId, topUp.getTopUpAmount());
         LOGGER.info("TopUp updated");
 
+        //persist topUp transaction
         topUpService.registerTopUp(topUp);
         LOGGER.info("TopUp persisted");
 
